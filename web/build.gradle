@@ -1,0 +1,39 @@
+// jar包的名字
+archivesBaseName = 'web'
+version='1.0.0'
+
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public" }
+        maven { url "http://repo.spring.io/snapshot" }
+        maven { url "http://repo.spring.io/milestone" }
+        jcenter()
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${versions.springboot}")
+    }
+}
+// 引入SpringBoot
+apply plugin: 'org.springframework.boot'
+// 可以打war包
+apply plugin: 'war'
+
+dependencies {
+    // 依赖模块
+    compile(
+            project(':core'),
+            project(':util'),
+    )
+    // 依赖jar
+    compile(
+            libraries.'web',
+            libraries.'swagger',
+            libraries.'swagger_ui',
+//            libraries.'security',
+            libraries.'shiro',
+            libraries.'jsp',
+    )
+//    testCompile group: 'junit', name: 'junit', version: '4.12'
+}

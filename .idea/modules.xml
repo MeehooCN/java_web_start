@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core.iml" group="core" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core_main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core_main.iml" group="core" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core_test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core_test.iml" group="core" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mobile.iml" filepath="$PROJECT_DIR$/.idea/modules/mobile.iml" group="mobile" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mobile/mobile_main.iml" filepath="$PROJECT_DIR$/.idea/modules/mobile/mobile_main.iml" group="mobile" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mobile/mobile_test.iml" filepath="$PROJECT_DIR$/.idea/modules/mobile/mobile_test.iml" group="mobile" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/util/util.iml" filepath="$PROJECT_DIR$/.idea/modules/util/util.iml" group="util" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/util/util_main.iml" filepath="$PROJECT_DIR$/.idea/modules/util/util_main.iml" group="util" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/util/util_test.iml" filepath="$PROJECT_DIR$/.idea/modules/util/util_test.iml" group="util" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/web/web.iml" filepath="$PROJECT_DIR$/.idea/modules/web/web.iml" group="web" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/web/web_main.iml" filepath="$PROJECT_DIR$/.idea/modules/web/web_main.iml" group="web" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/web/web_test.iml" filepath="$PROJECT_DIR$/.idea/modules/web/web_test.iml" group="web" />
+    </modules>
+  </component>
+</project>

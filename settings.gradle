@@ -1,0 +1,6 @@
+rootProject.name = 'start_project'
+include 'util'
+include 'core'
+include 'web'
+include 'mobile'
+

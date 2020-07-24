@@ -1,0 +1,60 @@
+ext.versions = [
+        springboot : '2.0.2.RELEASE',
+        logback : '1.1.11',
+        slf4j   : '1.7.24',
+        mysql   : '5.1.37',
+        poi     : '3.11',
+]
+
+ext.libraries = [
+        // Spring相关
+//        "springboot":"org.springframework.boot:spring-boot-starter:${versions.springboot}",
+        "web":"org.springframework.boot:spring-boot-starter-web:${versions.springboot}",
+//                "org.springframework.boot:spring-boot-starter-quartz:2.0.2.RELEASE", // 任务调用系统
+        "jpa":"org.springframework.boot:spring-boot-starter-data-jpa:${versions.springboot}",
+        "aop":"org.springframework.boot:spring-boot-starter-aop:${versions.springboot}",
+        "security":"org.springframework.boot:spring-boot-starter-security:${versions.springboot}",  //security
+        
+        // 日志
+        "logback-classic"        : "ch.qos.logback:logback-classic:${versions.logback}",
+        "logback-core"           : "ch.qos.logback:logback-core:${versions.logback}",
+        "jcl-over-slf4j"         : "org.slf4j:jcl-over-slf4j:${versions.slf4j}",
+        "log4j-over-slf4j"       : "org.slf4j:log4j-over-slf4j:${versions.slf4j}",
+        "slf4j-api"              : "org.slf4j:slf4j-api:${versions.slf4j}",
+        
+        // 数据库
+        "mysql":"mysql:mysql-connector-java:${versions.mysql}",
+
+        // jsp支持
+        "jsp":"org.apache.tomcat.embed:tomcat-embed-jasper:9.0.8",
+        
+        // swagger
+        "swagger":"io.springfox:springfox-swagger2:2.9.2",
+        "swagger_ui":"com.github.xiaoymin:swagger-bootstrap-ui:1.8.4",
+
+        //lombok
+        "lombok":"org.projectlombok:lombok:1.16.16",
+
+        //编码解码(excel读取里面用了，保持版本一致)
+        "codec":"commons-codec:commons-codec:1.9",
+
+        // 缩略图
+        "thumbnailator":"net.coobird:thumbnailator:0.4.8",
+        
+        // Excel读取
+        "poi":"org.apache.poi:poi:${versions.poi}", // excel读取数据
+		"poi-ooml":"org.apache.poi:poi-ooxml:${versions.poi}",
+        "oomxl":"org.apache.poi:ooxml-schemas:1.1",
+		"poi-scratchpad":"org.apache.poi:poi-scratchpad:${versions.poi}",
+
+		// http网络请求
+		"httpclient":"org.apache.httpcomponents:httpclient:4.5.2",
+		"oss":"com.aliyun.oss:aliyun-sdk-oss:2.8.3",
+
+		// json
+		"gson":"com.google.code.gson:gson:2.8.5",
+//		"fastjson":'com.alibaba.fastjson:1.2.58'
+
+		// 安全
+		"shiro":"org.apache.shiro:shiro-spring:1.4.0",
+]

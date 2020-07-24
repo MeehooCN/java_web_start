@@ -1,0 +1,24 @@
+// jar包的名字
+archivesBaseName = 'bos'
+version='1.0.0'
+
+dependencies {
+    compile(
+            // excelReader
+            libraries.'poi',
+            libraries.'poi-ooml',
+
+            // 网络请求
+//            libraries.'httpclient',
+
+            // 缩略图
+            libraries.'thumbnailator',
+            // 编码解码
+            libraries.'codec',
+            // json
+            libraries.'gson',
+    )
+
+}
+
+

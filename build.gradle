@@ -1,0 +1,82 @@
+// 依赖存放位置
+apply from: 'dependency.gradle'
+allprojects{
+    // 使根目录不在gradle里显示的前置
+    apply plugin: 'idea'
+    // java项目。打包java
+    apply plugin: 'java'
+
+}
+
+// 所有子项目的通用配置
+subprojects {
+    version = '1.0.0'
+
+    // JVM 版本号要求
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    // java编译的时候缺省状态下会因为中文字符而失败
+    [compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
+
+    //指定maven仓库
+    repositories {
+        mavenLocal()
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public" }
+        mavenCentral()
+    }
+
+    dependencies{
+        //
+        // 通用依赖
+        //
+//        compile(
+//                libraries.'logback-classic',
+//                libraries.'jcl-over-slf4j',
+//                libraries.'log4j-over-slf4j',
+//        )
+//        compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.0.2.RELEASE'
+//        //redis连接池
+//        compile group: 'redis.clients', name: 'jedis', version: '2.9.0'
+
+//        annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+        // 二维码
+//        compile group: 'com.google.zxing', name: 'core', version: '3.3.0'
+//        compile group: 'com.google.zxing', name: 'javase', version: '3.3.0'
+        // 微信开发工具
+//        compile group: 'com.github.binarywang', name: 'weixin-java-mp', version: '3.6.0'
+//        compile group: 'com.github.binarywang', name: 'weixin-java-pay', version: '3.6.0'
+//        compile group: 'com.github.binarywang', name: 'weixin-java-miniapp', version: '3.6.0'
+        // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+//        compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
+        //
+        // 引入根目录和各子项目下的libs中的jar包
+        //
+        ext.jarTree = fileTree(dir: 'libs', include: '**/*.jar')
+        ext.rootProjectLibs = new File(rootProject.rootDir, 'libs').getAbsolutePath()
+        ext.jarTree += fileTree(dir: rootProjectLibs, include: '**/*.jar')
+
+        compile jarTree
+    }
+    // 打印显示当前项目下所有用于 compile 的 jar.
+//    task listJars(description: 'Display all compile jars.') << {
+//        configurations.compile.each { File file -> println file.name }
+//    }
+}
+
+/**
+ * idea 里面忽略根项目，也就是说不将根项目设置为 module
+ */
+gradle.projectsEvaluated {
+    gradle.rootProject {
+        ideaModule.enabled = false
+        idea {
+            project {
+                // modules = subprojects*.idea.module
+                // 如果某个子项目的 ideaModule 设置为 false，则不会在 idea 中生成 module
+                def modulesToInclude = subprojects.findAll {it.ideaModule.enabled == true}
+                modules = modulesToInclude.idea.module
+            }
+        }
+    }
+}

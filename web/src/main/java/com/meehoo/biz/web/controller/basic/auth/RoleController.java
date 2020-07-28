@@ -47,17 +47,18 @@ public class RoleController extends BaseController<Role,RoleVO> {
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public HttpResult<String> create(@RequestBody RoleRO roleRO) throws Exception {
         // 判断编号是否重复
-        Role has = roleService.queryByNumber(roleRO.getNumber());
-        if (has!=null){
-            throw new RuntimeException("角色编号重复");
-        }
+//        Role has = roleService.queryByNumber(roleRO.getNumber());
+//        if (has!=null){
+//            throw new RuntimeException("角色编号重复");
+//        }
         Role role = new Role();
-        boolean hasNoNumber = !StringUtil.stringNotNull(roleRO.getNumber());
-        if(hasNoNumber) {
-            role.setCode(commonService.getBizObjectSerialNumber("Role"));
-        }else {
-            role.setCode((roleRO.getNumber()));
-        }
+//        boolean hasNoNumber = !StringUtil.stringNotNull(roleRO.getNumber());
+//        if(hasNoNumber) {
+//            role.setCode(commonService.getBizObjectSerialNumber("Role"));
+//        }else {
+//            role.setCode((roleRO.getNumber()));
+//        }
+        role.setCode(roleService.getNextCode());
         role.setName(roleRO.getName());
         role.setRemark(roleRO.getRemark());
         role.setRoleType(roleRO.getRoleType());
@@ -80,7 +81,7 @@ public class RoleController extends BaseController<Role,RoleVO> {
         if (StringUtil.stringNotNull(roleRO.getId())) {
             role = roleService.queryById(Role.class, roleRO.getId());
             role.setUpdateTime(new Date());
-            role.setCode((roleRO.getNumber()));
+//            role.setCode((roleRO.getNumber()));
             role.setName(roleRO.getName());
             role.setRemark(roleRO.getRemark());
             role.setRoleType(roleRO.getRoleType());

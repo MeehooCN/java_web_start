@@ -40,8 +40,8 @@ public class Role extends IdEntity {
     /**
      * 编号
      */
-    @Column(nullable = false, length = 80)
-    private String code;
+    @Column(nullable = false,columnDefinition = "int default 0")
+    private int code;
 
     /**
      * 角色名

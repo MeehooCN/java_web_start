@@ -43,7 +43,19 @@ public class SearchConditionBuilder {
         return add(name,"like","%"+value);
     }
 
+    public SearchConditionBuilder addOrderDesc(String name){
+        if (StringUtil.stringNotNull(name)){
+            return add(name,SearchCondition.ORDER_BY_DESC,"");
+        }
+        return this;
+    }
 
+    public SearchConditionBuilder addOrderAsc(String name){
+        if (StringUtil.stringNotNull(name)){
+            return add(name,SearchCondition.ORDER_BY_ASC,"");
+        }
+        return this;
+    }
 
     public List<SearchCondition> toList(){
         return searchCondition;

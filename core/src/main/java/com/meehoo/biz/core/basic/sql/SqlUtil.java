@@ -1,4 +1,4 @@
-package com.meehoo.biz.core.basic.util;
+package com.meehoo.biz.core.basic.sql;
 
 import com.meehoo.biz.common.util.BaseUtil;
 import com.meehoo.biz.common.util.DateUtil;

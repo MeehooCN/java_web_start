@@ -1,6 +1,6 @@
 package com.meehoo.biz.core.basic.vo;
 
-import com.meehoo.biz.core.basic.util.SqlUtil;
+import com.meehoo.biz.core.basic.sql.SqlUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

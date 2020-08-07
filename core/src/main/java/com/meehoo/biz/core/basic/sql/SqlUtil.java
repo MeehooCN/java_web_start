@@ -16,15 +16,33 @@ import java.util.List;
 public class SqlUtil {
 
     public static String objectToString(Object object){
-        return String.valueOf(object);
+        if (object!=null)
+            return String.valueOf(object);
+        return "";
     }
 
     public static double objectToDouble(Object object){
-        return Double.parseDouble(String.valueOf(object));
+        try {
+            String s = String.valueOf(object);
+            if (!"".equals(s)&&!"null".equalsIgnoreCase(s)){
+                return Double.parseDouble(s);
+            }
+        }catch (NumberFormatException e){
+            System.out.println("转化失败:"+String.valueOf(object));
+        }
+        return 0d;
     }
 
     public static int objectToInt(Object object){
-        return Integer.parseInt(String.valueOf(object));
+        try {
+            String s = String.valueOf(object);
+            if (!"".equals(s)) {
+                return Integer.parseInt(s);
+            }
+        }catch (NumberFormatException e){
+            System.out.println("转化失败:"+String.valueOf(object));
+        }
+        return 0;
     }
 
     public static Date objectToDate(Object object){

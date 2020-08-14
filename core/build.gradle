@@ -30,6 +30,7 @@ dependencies {
             libraries.'lombok',
             libraries.'swagger',
             libraries.'shiro',
+            libraries.'web',
     )
     //redis及连接池
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.0.2.RELEASE'

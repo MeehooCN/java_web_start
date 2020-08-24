@@ -75,4 +75,24 @@ public class BaseUtil {
         int code = random.nextInt(max) % (max - min + 1) + min;
         return pre+no+code;
     }
+
+    public Integer sexTransform(String sex){
+        if ("男".equals(sex)){
+            return 1;
+        }else if ("女".equals(sex)){
+            return 0;
+        }else{
+            return null;
+        }
+    }
+
+    public String sexTransform(int sex){
+        if (sex==1){
+            return "男";
+        }else if (sex==0){
+            return "女";
+        }else{
+            return null;
+        }
+    }
 }

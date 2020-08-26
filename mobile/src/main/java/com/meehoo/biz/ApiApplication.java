@@ -8,10 +8,13 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
+import java.util.TimeZone;
+
 @SpringBootApplication
 @ComponentScan
 public class ApiApplication extends SpringBootServletInitializer {
     public static void main(String[] args) {
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
         SpringApplication.run(ApiApplication.class, args);
         System.out.println("----------------------------------启动成功----------------------------------");
     }

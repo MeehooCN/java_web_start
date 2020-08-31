@@ -93,7 +93,7 @@ public class ExcelReader {
         sheet = wb.getSheetAt(sheetIndex);
         // 得到总行数
         int rowNum = sheet.getLastRowNum();
-        row = sheet.getRow(2);
+        row = sheet.getRow(1);
         //int colNum = row.getPhysicalNumberOfCells();
         int colNum = row.getLastCellNum();
 
@@ -113,7 +113,7 @@ public class ExcelReader {
         sheet = wb.getSheetAt(sheetIndex);
         // 得到总行数
         int rowNum = sheet.getLastRowNum();
-        row = sheet.getRow(2);
+        row = sheet.getRow(1);
         //int colNum = row.getPhysicalNumberOfCells();
         int colNum = row.getLastCellNum();
 

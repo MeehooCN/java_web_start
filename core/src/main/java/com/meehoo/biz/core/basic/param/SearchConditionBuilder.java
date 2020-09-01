@@ -57,6 +57,14 @@ public class SearchConditionBuilder {
         return this;
     }
 
+    public SearchConditionBuilder addOrder(int type,String name){
+        if (type>0)
+            return addOrderAsc(name);
+        else if (type<0)
+            return addOrderDesc(name);
+        return this;
+    }
+
     public List<SearchCondition> toList(){
         return searchCondition;
     }

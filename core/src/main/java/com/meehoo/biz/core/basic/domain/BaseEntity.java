@@ -38,8 +38,8 @@ public class BaseEntity extends IdEntity {
     /**
      * 状态
      */
-    @Column
-    protected int status = STATUS_ENABLE;
+    @Column(columnDefinition = "int default 1")
+    protected Integer status ;
 
     @Column(columnDefinition = "int default 0")
     protected int isDelete;

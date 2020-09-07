@@ -13,7 +13,24 @@ public class DateUtil {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
     private static final SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM");
     public static final long DayLong = 1000*60*60*24;
+
+    public static List<Date> getEveryMonthOfYear(){
+        Date now = getTodayBegin();
+        int total = get(now, Calendar.MONTH);
+        List<Date> result = new ArrayList<>(total);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        calendar.set(Calendar.DAY_OF_MONTH,1);
+
+        for (int n=0;n<total;n++){
+            calendar.set(Calendar.MONTH,n);
+            result.add(calendar.getTime());
+        }
+        return result;
+    }
 
     public static List<Date> getEveryDayOfMonth(){
         Date now = getTodayBegin();
@@ -49,6 +66,12 @@ public class DateUtil {
         return "";
     }
 
+    public static String ymToString(Date date){
+        if (date!=null)
+            return sdf3.format(date);
+        return "";
+    }
+
     public static String longToString(long currentTime){
         String time = sdf.format( Long.valueOf(currentTime));
         return time;
@@ -59,15 +82,25 @@ public class DateUtil {
     }
 
     public static Date stringToDate(String string) throws Exception{
-        if (string.length() == 19){
-            return sdf1.parse(string);
-        }else if (string.length() == 10){
-            return sdf2.parse(string);
-        }else if (string.length() == 14){
-            return sdf.parse(string);
-        }else{
-            throw new RuntimeException("时间长度不对");
+        if (StringUtil.stringIsNull(string)){
+            return null;
         }
+        try {
+            if (string.length() == 19){
+                return sdf1.parse(string);
+            }else if (string.length() == 10){
+                return sdf2.parse(string);
+            }else if (string.length() == 14){
+                return sdf.parse(string);
+            }else if (string.length()==7){
+                return sdf3.parse(string);
+            }else{
+                throw new RuntimeException("时间长度不对");
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static Date getTodayBegin(){

@@ -20,6 +20,11 @@ public class PieChartVO {
 
     private Double value;//
 
+    public PieChartVO(String name){
+        this.name = name;
+        value = 0d;
+    }
+
     public PieChartVO(Object[] objects){
         if (objects.length!=2){
             throw new RuntimeException("结果长度不对");

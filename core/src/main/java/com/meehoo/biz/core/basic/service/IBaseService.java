@@ -35,7 +35,7 @@ public interface IBaseService {
     <T> void mergeEntryList(List<T> oldEntryList, List<T> needSaveEntryList) throws Exception;
 
     // 查
-    <T> T queryById(Class<T> entityClass, Object id) throws Exception;
+    <T> T queryById(Class<T> entityClass, Object id);
     <T> List<T> queryByIds(Class<?> clazz, Collection idList) ;
     <T> T queryByColumn(Class<?> clazz, String column, Object value) throws Exception;
     <T> List<T> queryListByColumn(Class<T> clazz, String column, Object value) throws Exception;

@@ -11,78 +11,168 @@ import java.util.Map;
  * @date 2020-08-05
  */
 public class SQLBuilder {
-    private String select;
-    private String from;
-    private String where;
-    private String groupBy;
-    private String orderBy;
+    private StringBuilder select;
+    private StringBuilder from;
+    private StringBuilder where;
+    private StringBuilder groupBy;
+    private StringBuilder orderBy;
     private SQLHelper sqlHelper;
 
     public SQLBuilder(SQLHelper sqlHelper) {
-        this.select = "SELECT ";
-        this.from = "FROM ";
-        this.where = "WHERE ";
-        this.groupBy = "GROUP BY ";
-        this.orderBy = "ORDER BY ";
+        this.select = new StringBuilder("SELECT ");
+        this.from = new StringBuilder("FROM ");
+        this.where = new StringBuilder("WHERE ");
+        this.groupBy = new StringBuilder("GROUP BY ");
+        this.orderBy = new StringBuilder("ORDER BY ");
         this.sqlHelper = sqlHelper;
     }
 
-    public SQLBuilder createGroupBy(String... groupByParams){
-        StringBuilder selectSB = new StringBuilder(" COUNT(*) as count");
-        StringBuilder groupBySB = new StringBuilder();
-        for (String param : groupByParams) {
-            selectSB.append(",");
-            selectSB.append(param);
-            selectSB.append(" ");
-
-            groupBySB.append(param);
-            groupBySB.append(" ,");
+    public SQLBuilder groupBy(String groupByParams){
+        if (groupBy.length()!=9){
+            groupBy.append(" ,");
         }
-//        selectSB.deleteCharAt(selectSB.length()-1);
-        groupBySB.deleteCharAt(groupBySB.length()-1);
-        select+= selectSB.toString();
-        groupBy+= groupBySB.toString();
+        groupBy.append(groupByParams);
         return this;
     }
 
-    public SQLBuilder addFrom(String tableName){
-        from+= " "+tableName+" ";
+    public SQLBuilder groupByIf(boolean isFirst,String groupBy1,String groupBy2){
+        if (isFirst){
+            return groupBy(groupBy1);
+        }else{
+            return groupBy(groupBy2);
+        }
+    }
+
+    public SQLBuilder groupByYMD(String groupByParams){
+        return groupBy(SqlUtil.getYMDGroupBy(groupByParams));
+    }
+
+    public SQLBuilder groupByYM(String groupByParams){
+        groupBy("year("+groupByParams+")");
+        groupBy("month("+groupByParams+")");
         return this;
     }
 
-    public SQLBuilder addWhereParamsEQ(String param, String value){
+    public SQLBuilder select(String param){
+        if (select.length()!=7){
+            select.append(",");
+        }
+        select.append(param);
+        select.append(" ");
+        return this;
+    }
+
+    public SQLBuilder selectCount(){
+        return select("COUNT(*) AS " + SQLHelper.Result_Count);
+    }
+
+    public SQLBuilder selectIf(boolean isFirst,String p1,String p2){
+        if (isFirst){
+            return select(p1);
+        }else{
+            return select(p2);
+        }
+    }
+
+    public SQLBuilder from(String tableName){
+        from.append(" ");
+        from.append(tableName);
+        from.append(" ");
+        return this;
+    }
+
+    public SQLBuilder whereParamsGE(String param,String value){
         if (StringUtil.stringNotNull(value)){
-            where+= " "+param+" = '"+value+"' ";
+            if (where.length()!=6){
+                where.append(" AND ");
+            }
+            where.append(" ");
+            where.append(param);
+            where.append(" >= '");
+            where.append(value);
+            where.append("' ");
         }
         return this;
     }
 
-    public SQLBuilder addWhereParamsLikeStart(String param, String value){
+    public SQLBuilder whereParamsLT(String param,String value){
         if (StringUtil.stringNotNull(value)){
-            where+= " "+param+" LIKE '"+value+"%' ";
+            if (where.length()!=6){
+                where.append(" AND ");
+            }
+            where.append(" ");
+            where.append(param);
+            where.append(" < '");
+            where.append(value);
+            where.append("' ");
+        }
+        return this;
+    }
+
+    public SQLBuilder whereParamsEQ(String param,String value){
+        if (StringUtil.stringNotNull(value)){
+            if (where.length()!=6){
+                where.append(" AND ");
+            }
+            where.append(" ");
+            where.append(param);
+            where.append(" = '");
+            where.append(value);
+            where.append("' ");
+        }
+        return this;
+    }
+
+    public SQLBuilder whereParamsLikeStart(String param,String value){
+        if (StringUtil.stringNotNull(value)){
+            if (where.length()!=6){
+                where.append(" AND ");
+            }
+            where.append(" ");
+            where.append(param);
+            where.append(" LIKE '");
+            where.append(value);
+            where.append("%' ");
         }
         return this;
     }
 
     public String toSQL(){
-        String sql = select+from;
-        if (!"WHERE ".equals(where)){
-            sql+=where;
+        String sql = check(select);
+        sql+=from;
+        String whereStr = where.toString();
+        if (!"WHERE ".equals(whereStr)){
+            sql+=whereStr;
         }
-        if (!"GROUP BY ".equals(groupBy)){
-            sql+=groupBy;
+
+        String groupByStr = check(groupBy);
+        if (!"GROUP BY ".equals(groupByStr)){
+            sql+=groupByStr;
         }
-        if (!"ORDER BY ".equals(orderBy)){
-            sql+=orderBy;
+        String orderByStr = check(orderBy);
+        if (!"ORDER BY ".equals(orderByStr)){
+            sql+=orderByStr;
         }
         return sql;
     }
 
+    private String check(StringBuilder sb){
+        if (','==sb.charAt(sb.length()-1)){
+            sb.deleteCharAt(sb.length()-1);
+        }
+        return sb.toString();
+    }
+
     public List<Map<String,Object>> exe(){
         String sql = toSQL();
-        List<Map<String, Object>> result = sqlHelper.getSqlExecute().queryForEntry(sql);
-        destroy();
-        return result;
+        try {
+            List<Map<String, Object>> result = sqlHelper.getSqlExecute().queryForEntry(sql);
+            destroy();
+            return result;
+        }catch (Exception e){
+            System.out.println(sql);
+            throw e;
+        }
     }
 
     public void destroy(){

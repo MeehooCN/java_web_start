@@ -154,7 +154,7 @@ public class BaseService implements IBaseService {
     /**
      * 查
      */
-    public <T> T queryById(Class<T> entityClass,@NonNull Object primaryKey) throws Exception {
+    public <T> T queryById(Class<T> entityClass,@NonNull Object primaryKey){
         return baseDao.queryById(entityClass, primaryKey);
     }
     public <T> List<T> queryByIds(Class<?> clazz, Collection idList) {

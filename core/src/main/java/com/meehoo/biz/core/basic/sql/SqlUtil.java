@@ -3,10 +3,12 @@ package com.meehoo.biz.core.basic.sql;
 import com.meehoo.biz.common.util.BaseUtil;
 import com.meehoo.biz.common.util.DateUtil;
 import com.meehoo.biz.core.basic.param.PageResult;
+import com.meehoo.biz.core.basic.vo.PieChartVO;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 创建sql的工具类
@@ -23,24 +25,31 @@ public class SqlUtil {
 
     public static double objectToDouble(Object object){
         try {
-            String s = String.valueOf(object);
-            if (!"".equals(s)&&!"null".equalsIgnoreCase(s)){
-                return Double.parseDouble(s);
+            if (object!=null){
+                String s = String.valueOf(object);
+                if (!"".equals(s)&&!"null".equalsIgnoreCase(s)){
+                    return Double.parseDouble(s);
+                }
             }
         }catch (NumberFormatException e){
-            System.out.println("转化失败:"+String.valueOf(object));
+            System.out.println("转化Double失败:"+String.valueOf(object));
         }
         return 0d;
     }
 
     public static int objectToInt(Object object){
         try {
-            String s = String.valueOf(object);
-            if (!"".equals(s)) {
-                return Integer.parseInt(s);
+            if (object!=null){
+                String s = String.valueOf(object);
+                if (!"".equals(s)) {
+                    if (s.contains(".")){
+                        s = s.substring(0,s.indexOf("."));
+                    }
+                    return Integer.parseInt(s);
+                }
             }
         }catch (NumberFormatException e){
-            System.out.println("转化失败:"+String.valueOf(object));
+            System.out.println("转化Int失败:"+String.valueOf(object));
         }
         return 0;
     }
@@ -74,10 +83,85 @@ public class SqlUtil {
         return new PageResult<>(total,list.subList(startIndex,endIndex));
     }
 
+    public static String getInParam(Collection<String> sources){
+        if (BaseUtil.collectionNotNull(sources)){
+            StringBuilder params = new StringBuilder("(");
+            for (String source : sources) {
+                params.append("'");
+                params.append(source);
+                params.append("',");
+            }
+            params.delete(params.length()-1,params.length());
+            params.append(")");
+            return params.toString();
+        }
+        return "('!')";
+    }
+
     public static String getYMDSelect(String field){
         String select =  "CONCAT(year(field),'-',\n" +
                 "IF(LENGTH(month(field))=1,CONCAT('0',month(field)),month(field)),'-',\n" +
-                "IF(LENGTH(day  (field))=1,CONCAT('0',day  (field)),day  (field)))";
+                "IF(LENGTH(day  (field))=1,CONCAT('0',day  (field)),day  (field))) AS " + SQLHelper.Result_Date;
         return select.replaceAll("field",field);
+    }
+
+    public static String getYMSelect(String field){
+        String select =  "CONCAT(year(field),'-',\n" +
+                "IF(LENGTH(month(field))=1,CONCAT('0',month(field)),month(field))) AS " + SQLHelper.Result_Date;
+        return select.replaceAll("field",field);
+    }
+
+    public static String getYMDGroupBy(String field){
+        String groupBy = "year("+field+"),month("+field+"),day("+field+")";
+        return groupBy;
+    }
+
+    public static String getYMGroupBy(String field){
+        String groupBy = "year("+field+"),month("+field+")";
+        return groupBy;
+    }
+
+    public static List<PieChartVO> getEveryDayOfMonth(){
+        List<Date> everyDayOfMonth = DateUtil.getEveryDayOfMonth();
+        return everyDayOfMonth.stream().map(e -> new PieChartVO(DateUtil.dateToString(e))).collect(Collectors.toList());
+    }
+
+    public static List<PieChartVO> getEveryMonthOfYear(){
+        List<Date> everyMonthOfYear = DateUtil.getEveryMonthOfYear();
+        return everyMonthOfYear.stream().map(e -> new PieChartVO(DateUtil.ymToString(e))).collect(Collectors.toList());
+    }
+
+    public static void copyValue(Map source, Object target){
+        Class<?> targetClass = target.getClass();
+        Method[] methods = targetClass.getMethods();
+
+        Map<String,Method> name_method = new HashMap<>(methods.length/2);
+        for (Method method : methods) {
+            String name = method.getName();
+            Class<?>[] parameterTypes = method.getParameterTypes();
+            if (name.startsWith("set")&&parameterTypes.length==1){
+                String key = name.substring(3, name.length());
+                name_method.put(key.toLowerCase(),method);
+            }
+        }
+
+        for (Object key : source.keySet()) {
+            String keyStr = String.valueOf(key).toLowerCase();
+            if (name_method.containsKey(keyStr)){
+                Method method = name_method.get(keyStr);
+                try {
+                    Object value = source.get(key);
+                    Class<?>[] parameterTypes = method.getParameterTypes();
+                    if (parameterTypes[0]==Integer.class){
+                        value = SqlUtil.objectToInt(value);
+                    }
+                    method.invoke(target, value);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

@@ -18,9 +18,9 @@ import javax.persistence.MappedSuperclass;
 @Accessors(chain = true)
 public class BaseEntity extends IdEntity {
 
-    public static final int STATUS_ENABLE = 1;
-
-    public static final int STATUS_FORBID = 0;
+//    public static final int STATUS_ENABLE = 1;
+//
+//    public static final int STATUS_FORBID = 0;
 
     /**
      * 编号
@@ -38,8 +38,8 @@ public class BaseEntity extends IdEntity {
     /**
      * 状态
      */
-    @Column(columnDefinition = "int default 1")
-    protected Integer status ;
+//    @Column(columnDefinition = "int default 1")
+//    protected Integer status ;
 
     @Column(columnDefinition = "int default 0")
     protected int isDelete;

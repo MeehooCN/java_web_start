@@ -75,7 +75,7 @@ public abstract class BaseControllerPlus<D extends IdEntity, V extends IdEntityV
         return super.listAll(searchConditionListRO);
     }
 
-    @ApiOperation(value = "通用新增接口", notes = "具体参数参考Ro类型定义")
+    @ApiOperation(value = "基础:通用新增接口", notes = "具体参数参考Ro类型定义")
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public HttpResult<String> create(@RequestBody R ro) throws Exception {
 //        Map<String, Object> map;
@@ -91,7 +91,7 @@ public abstract class BaseControllerPlus<D extends IdEntity, V extends IdEntityV
         return new HttpResult<>(idProperty);
     }
 
-    @ApiOperation("通用更改接口")
+    @ApiOperation("基础:通用更改接口")
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public HttpResult<Boolean> update(@RequestBody R ro) throws Exception {
 //        Method checkMethod = ReflectUtil.findMethod(clazzR, CommonMethod.FIELDSCHECK.toString());

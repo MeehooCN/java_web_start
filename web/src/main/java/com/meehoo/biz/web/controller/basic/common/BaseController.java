@@ -57,7 +57,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
      * 分页显示域模型信息
      * ！直接让前端调用这种接口并不安全
      */
-    @ApiOperation("分页查询")
+    @ApiOperation("基础:分页查询")
 //    @RequestMapping(value = "list", method = RequestMethod.POST)
 //    @ResponseBody
     protected HttpResult<PageResult<V>> list(@RequestBody PageRO pagePO) throws Exception {
@@ -70,7 +70,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
      * 显示所有域模型信息
      * ！直接让前端调用这种接口并不安全
      */
-    @ApiOperation("查询所有")
+    @ApiOperation("基础:查询所有")
 //    @RequestMapping(value = "listAll", method = RequestMethod.POST)
 //    @ResponseBody
     protected HttpResult<List<V>> listAll(@RequestBody SearchConditionListRO searchConditionListRO) throws Exception {
@@ -78,23 +78,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
         return new HttpResult<>(resultList);
     }
 
-    /**
-     * 获取编号
-     *
-     * @param authenticationRO
-     * @return
-     * @throws Exception
-     */
-    @ApiOperation("获取编号")
-    @RequestMapping(value = "getNumber", method = RequestMethod.POST)
-    public HttpResult<String> getNumber(@RequestBody AuthenticationRO authenticationRO) throws Exception {
-//        Map<String, Object> map = new HashMap<>();
-        String number = commonService.getBizObjectSerialNumber(clazzD.getSimpleName());
-//        map.put("data", number);
-        return new HttpResult<>(number);
-    }
-
-    @ApiOperation("根据id获取实体类")
+    @ApiOperation("基础:根据id获取实体类")
     @RequestMapping(value = "getById", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult<V> getById(@RequestBody IdRO idRO) throws Exception{
@@ -116,7 +100,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
         }
     }
 
-    @ApiOperation("删除")
+    @ApiOperation("基础:删除")
     @RequestMapping(value = "delete", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult delete(@RequestBody IdRO idRO) throws Exception {
@@ -129,7 +113,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
      * @param changeStatusRO
      * @return
      */
-    @ApiOperation("更新status状态")
+    @ApiOperation("基础:更新status状态")
     @RequestMapping(value = "changeStatus", method = RequestMethod.POST)
     public HttpResult<Boolean> changeStatus(@RequestBody ChangeStatusRO changeStatusRO) throws Exception {
         Object objId = null;

@@ -5,6 +5,7 @@ import com.meehoo.biz.core.basic.param.SearchCondition;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,6 +17,9 @@ public class SearchConditionListRO {
     private List<SearchCondition> searchConditionList;
 
     public List<SearchCondition> getSearchConditionList() {
+        if (searchConditionList == null){
+            searchConditionList = new ArrayList<>(1);
+        }
         return searchConditionList;
     }
 

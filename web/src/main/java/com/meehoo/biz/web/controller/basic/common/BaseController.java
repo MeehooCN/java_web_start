@@ -1,10 +1,12 @@
 package com.meehoo.biz.web.controller.basic.common;
 
 import com.meehoo.biz.common.util.BaseUtil;
+import com.meehoo.biz.core.basic.domain.BaseEntity;
 import com.meehoo.biz.core.basic.domain.IdEntity;
 import com.meehoo.biz.core.basic.param.HttpResult;
 import com.meehoo.biz.core.basic.param.PageCriteria;
 import com.meehoo.biz.core.basic.param.PageResult;
+import com.meehoo.biz.core.basic.param.SearchCondition;
 import com.meehoo.biz.core.basic.ro.IdRO;
 import com.meehoo.biz.core.basic.ro.bos.ChangeStatusRO;
 import com.meehoo.biz.core.basic.ro.bos.PageRO;
@@ -57,10 +59,23 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
      * 分页显示域模型信息
      * ！直接让前端调用这种接口并不安全
      */
-    @ApiOperation("基础:分页查询")
-//    @RequestMapping(value = "list", method = RequestMethod.POST)
-//    @ResponseBody
+    @ApiOperation("基础__分页查询，不查禁用")
+    @RequestMapping(value = "list", method = RequestMethod.POST)
+    @ResponseBody
     protected HttpResult<PageResult<V>> list(@RequestBody PageRO pagePO) throws Exception {
+        PageCriteria pageCriteria     = new PageCriteria(pagePO.getPage(), pagePO.getRows());
+        List<SearchCondition> searchConditionList = pagePO.getSearchConditionList();
+        if (BaseEntity.class.isAssignableFrom(clazzD)){
+            searchConditionList.add(new SearchCondition("status","=","1"));
+        }
+        PageResult<V>       pageResult = baseService.listPage(clazzD, clazzV, pageCriteria, searchConditionList);
+        return new HttpResult<>(pageResult);
+    }
+
+    @ApiOperation("基础__分页查询")
+    @RequestMapping(value = "listWithDelete", method = RequestMethod.POST)
+    @ResponseBody
+    protected HttpResult<PageResult<V>> listWithDelete(@RequestBody PageRO pagePO) throws Exception {
         PageCriteria pageCriteria     = new PageCriteria(pagePO.getPage(), pagePO.getRows());
         PageResult<V>       pageResult = baseService.listPage(clazzD, clazzV, pageCriteria, pagePO.getSearchConditionList());
         return new HttpResult<>(pageResult);
@@ -70,15 +85,27 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
      * 显示所有域模型信息
      * ！直接让前端调用这种接口并不安全
      */
-    @ApiOperation("基础:查询所有")
-//    @RequestMapping(value = "listAll", method = RequestMethod.POST)
-//    @ResponseBody
+    @ApiOperation("基础__查询所有")
+    @RequestMapping(value = "listAll", method = RequestMethod.POST)
+    @ResponseBody
     protected HttpResult<List<V>> listAll(@RequestBody SearchConditionListRO searchConditionListRO) throws Exception {
+        List<SearchCondition> searchConditionList = searchConditionListRO.getSearchConditionList();
+        if (BaseEntity.class.isAssignableFrom(clazzD)){
+            searchConditionList.add(new SearchCondition("status","=","1"));
+        }
+        List<V>             resultList = baseService.listAll(clazzD, clazzV, searchConditionList);
+        return new HttpResult<>(resultList);
+    }
+
+    @ApiOperation("基础__查询所有")
+    @RequestMapping(value = "listAllWithDelete", method = RequestMethod.POST)
+    @ResponseBody
+    protected HttpResult<List<V>> listAllWithDelete(@RequestBody SearchConditionListRO searchConditionListRO) throws Exception {
         List<V>             resultList = baseService.listAll(clazzD, clazzV, searchConditionListRO.getSearchConditionList());
         return new HttpResult<>(resultList);
     }
 
-    @ApiOperation("基础:根据id获取实体类")
+    @ApiOperation("基础__根据id获取实体类")
     @RequestMapping(value = "getById", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult<V> getById(@RequestBody IdRO idRO) throws Exception{
@@ -100,7 +127,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
         }
     }
 
-    @ApiOperation("基础:删除")
+    @ApiOperation("基础__删除")
     @RequestMapping(value = "delete", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult delete(@RequestBody IdRO idRO) throws Exception {
@@ -113,7 +140,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
      * @param changeStatusRO
      * @return
      */
-    @ApiOperation("基础:更新status状态")
+    @ApiOperation("基础__更新status状态")
     @RequestMapping(value = "changeStatus", method = RequestMethod.POST)
     public HttpResult<Boolean> changeStatus(@RequestBody ChangeStatusRO changeStatusRO) throws Exception {
         Object objId = null;

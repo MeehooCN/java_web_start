@@ -51,31 +51,7 @@ public abstract class BaseControllerPlus<D extends IdEntity, V extends IdEntityV
         }
     }
 
-    @Override
-    protected HttpResult<PageResult<V>> list(PageRO pagePO) throws Exception {
-        if (BaseEntity.class.isAssignableFrom(clazzD)){
-            pagePO.getSearchConditionList().add(new SearchCondition("isDelete","0","="));
-        }
-        return super.list(pagePO);
-    }
-
-    protected HttpResult<PageResult<V>> listWithDelete(PageRO pagePO) throws Exception {
-        return super.list(pagePO);
-    }
-
-    @Override
-    protected HttpResult<List<V>> listAll(@RequestBody SearchConditionListRO searchConditionListRO) throws Exception {
-        if (BaseEntity.class.isAssignableFrom(clazzD)){
-            searchConditionListRO.getSearchConditionList().add(new SearchCondition("isDelete","0","="));
-        }
-        return super.listAll(searchConditionListRO);
-    }
-
-    protected HttpResult<List<V>> listAllWithDelete(@RequestBody SearchConditionListRO searchConditionListRO) throws Exception {
-        return super.listAll(searchConditionListRO);
-    }
-
-    @ApiOperation(value = "基础:通用新增接口", notes = "具体参数参考Ro类型定义")
+    @ApiOperation(value = "基础__通用新增接口", notes = "具体参数参考Ro类型定义")
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public HttpResult<String> create(@RequestBody R ro) throws Exception {
 //        Map<String, Object> map;
@@ -91,7 +67,7 @@ public abstract class BaseControllerPlus<D extends IdEntity, V extends IdEntityV
         return new HttpResult<>(idProperty);
     }
 
-    @ApiOperation("基础:通用更改接口")
+    @ApiOperation("基础__通用更改接口")
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public HttpResult<Boolean> update(@RequestBody R ro) throws Exception {
 //        Method checkMethod = ReflectUtil.findMethod(clazzR, CommonMethod.FIELDSCHECK.toString());

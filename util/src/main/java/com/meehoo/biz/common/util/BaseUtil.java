@@ -82,7 +82,7 @@ public class BaseUtil {
         }else if ("女".equals(sex)){
             return 0;
         }else{
-            return null;
+            return -1;
         }
     }
 
@@ -92,7 +92,7 @@ public class BaseUtil {
         }else if (sex==0){
             return "女";
         }else{
-            return null;
+            return "";
         }
     }
 }

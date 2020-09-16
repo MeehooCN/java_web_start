@@ -164,6 +164,11 @@ public class BaseService implements IBaseService {
         }
         return new ArrayList<>();
     }
+    public <T extends IdEntity> Map<String,T> queryMapByIds(Class<T> clazz, Collection idList) {
+        List<T> result = queryByIds(clazz,idList);
+        Map<String, T> stringTMap = StreamUtil.convertCollectionToMap(result, e -> e.getId());
+        return stringTMap;
+    }
     @Override
     public <T> T queryByColumn(Class<?> clazz, @NonNull String column, Object value) throws Exception {
         String hql = "FROM " + clazz.getSimpleName() + " where " + column + "=?";

@@ -182,4 +182,9 @@ public class DateUtil {
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 
+    public static Date getMovedDate(int qty){
+        long timeLong = new Date().getTime();
+        return new Date(timeLong+qty*DayLong);
+    }
+
 }

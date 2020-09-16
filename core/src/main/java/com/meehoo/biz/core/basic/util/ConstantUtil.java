@@ -25,7 +25,7 @@ public class ConstantUtil {
             Field[] fields = tClass.getFields();
             for (Field field : fields) {
                 if (Modifier.isStatic(field.getModifiers())&&Modifier.isPublic(field.getModifiers())
-                        &&field.getName().toLowerCase().startsWith(fieldName)){
+                        &&field.getName().toLowerCase().startsWith(fieldName.toLowerCase())){
                     if (field.getType() == Integer.class||field.getType() == int.class){
                         try {
                             int anInt = field.getInt(tClass);

@@ -68,7 +68,7 @@ public class LoginController {
      * @return
      */
     @RequestMapping("/login")
-    public String login(String username, String password) {
+    public String login(String username, String password, HttpServletRequest request) {
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         Subject subject = SecurityUtils.getSubject();
         String msg = "";
@@ -81,17 +81,19 @@ public class LoginController {
         } catch (IncorrectCredentialsException e) {
             msg =   "密码错误！";
         } catch (Throwable e) {
-            msg =   "未知错误！";
+            msg =   e.getMessage();
         }
-        log.info(msg);
+        if (StringUtil.stringNotNull(msg)){
+            log.info(msg);
+            request.setAttribute("error", true);
 
-        //判断登录是否出现错误
-//        if (msg.length() > 0) {
-//            map.put("msg", msg);
+            request.getSession().setAttribute("SPRING_SECURITY_LAST_EXCEPTION",msg);
+//            return "redirect:/logout";
 //            return "/login";
-//        } else {
-//            return "redirect:index";
-//        }
+            return "redirect:/logoutError";
+        }
+        request.setAttribute("error", null);
+        request.getSession().setAttribute("SPRING_SECURITY_LAST_EXCEPTION",null);
         if (subject.isAuthenticated()&& StringUtil.stringIsNull(msg)){
 //            afterAuthenticate();
             return "redirect:sysmanage/index";

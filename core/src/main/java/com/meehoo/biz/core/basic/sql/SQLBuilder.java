@@ -1,8 +1,10 @@
 package com.meehoo.biz.core.basic.sql;
 
 
+import com.meehoo.biz.common.util.BaseUtil;
 import com.meehoo.biz.common.util.StringUtil;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -133,6 +135,20 @@ public class SQLBuilder {
             where.append(" LIKE '");
             where.append(value);
             where.append("%' ");
+        }
+        return this;
+    }
+
+    public SQLBuilder whereParamsIn(String param,Collection<String> values){
+        if (BaseUtil.collectionNotNull(values)){
+            if (where.length()!=6){
+                where.append(" AND ");
+            }
+            where.append(" ");
+            where.append(param);
+            where.append(" IN ");
+            where.append(SqlUtil.getInParam(values));
+            where.append(" ");
         }
         return this;
     }

@@ -27,6 +27,15 @@ public class SearchConditionBuilder {
         return add(name,"=",value);
     }
 
+    public SearchConditionBuilder addIn(String name, List<String> values){
+        StringBuilder sb = new StringBuilder();
+        for (String value : values) {
+            sb.append(value);
+            sb.append(",");
+        }
+        return add(name,"in",sb.toString());
+    }
+
     public SearchConditionBuilder addGe(String name, String value){
         return add(name,">=",value);
     }

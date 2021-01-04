@@ -36,4 +36,13 @@ public class StringUtil {
         }
         return numberStr;
     }
+
+    public static boolean equalsWithLowcase(String str1,String str2){
+        if (str1==null&&str2==null){
+            return true;
+        }else if (str1==null||str2==null){
+            return false;
+        }
+        return str1.toLowerCase().equalsIgnoreCase(str2.toLowerCase());
+    }
 }

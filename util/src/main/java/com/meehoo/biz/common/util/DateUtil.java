@@ -128,7 +128,7 @@ public class DateUtil {
     public static Date getThisYearBegin(){
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH,1);
-        calendar.set(Calendar.MONTH,1);
+        calendar.set(Calendar.MONTH,0);
         calendar.set(Calendar.HOUR,0);
         calendar.set(Calendar.MINUTE,0);
         calendar.set(Calendar.SECOND,0);

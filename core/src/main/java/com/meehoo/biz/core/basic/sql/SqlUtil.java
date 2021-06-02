@@ -3,7 +3,6 @@ package com.meehoo.biz.core.basic.sql;
 import com.meehoo.biz.common.util.BaseUtil;
 import com.meehoo.biz.common.util.DateUtil;
 import com.meehoo.biz.core.basic.param.PageResult;
-import com.meehoo.biz.core.basic.vo.PieChartVO;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,7 +24,7 @@ public class SqlUtil {
 
     public static double objectToDouble(Object object){
         try {
-            if (object!=null){
+             if (object!=null){
                 String s = String.valueOf(object);
                 if (!"".equals(s)&&!"null".equalsIgnoreCase(s)){
                     return Double.parseDouble(s);
@@ -111,6 +110,11 @@ public class SqlUtil {
         return select.replaceAll("field",field);
     }
 
+    public static String getWeekSelect(String field){
+        String select = " weekofyear("+field+") AS "+ SQLHelper.Result_Date;
+        return select;
+    }
+
     public static String getYMDGroupBy(String field){
         String groupBy = "year("+field+"),month("+field+"),day("+field+")";
         return groupBy;
@@ -118,6 +122,11 @@ public class SqlUtil {
 
     public static String getYMGroupBy(String field){
         String groupBy = "year("+field+"),month("+field+")";
+        return groupBy;
+    }
+
+    public static String getWeekGroupBy(String field){
+        String groupBy = "weekofyear("+field+")";
         return groupBy;
     }
 
@@ -131,7 +140,44 @@ public class SqlUtil {
         return everyMonthOfYear.stream().map(e -> new PieChartVO(DateUtil.ymToString(e))).collect(Collectors.toList());
     }
 
-    public static void copyValue(Map source, Object target){
+    public static List<PieChartVO> getGroupByPieChartMap(GroupByYmdType groupByYmdType){
+        List<PieChartVO> everyMonthOfYear;
+        if (groupByYmdType == GroupByYmdType.YMD){
+            everyMonthOfYear = getEveryDayOfMonth();
+        }else if (groupByYmdType == GroupByYmdType.YM){
+            everyMonthOfYear = getEveryMonthOfYear();
+        }else if (groupByYmdType == GroupByYmdType.WEEK){
+            everyMonthOfYear = getEveryWeekOfYear();
+        }else{
+            everyMonthOfYear = new ArrayList<>(0);
+        }
+        return everyMonthOfYear;
+    }
+
+    private static List<PieChartVO> getEveryWeekOfYear() {
+        // 获得今年到今天的每一周
+        Calendar calendar = Calendar.getInstance();
+        int qty = calendar.get(Calendar.WEEK_OF_YEAR);
+
+        List<PieChartVO> pieChartVOS = new ArrayList<>(qty);
+        for (int i=0;i++<qty;){
+            calendar.set(Calendar.WEEK_OF_YEAR,i);
+
+            PieChartVO vo = new PieChartVO();
+            calendar.set(Calendar.DAY_OF_WEEK,1);
+            String time = DateUtil.dateToString(calendar.getTime());
+            calendar.set(Calendar.DAY_OF_WEEK,7);
+            time+="~"+DateUtil.dateToString(calendar.getTime());
+            vo.setName(time);
+
+            vo.setValue((double) i);
+
+            pieChartVOS.add(vo);
+        }
+        return pieChartVOS;
+    }
+
+    public static void copyValue(Map source,Object target){
         Class<?> targetClass = target.getClass();
         Method[] methods = targetClass.getMethods();
 
@@ -164,4 +210,8 @@ public class SqlUtil {
             }
         }
     }
+
+//    private static Map<String,Float> getProporte(List<Object[]> sqlResult){
+//        sqlResult.
+//    }
 }

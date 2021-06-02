@@ -65,7 +65,7 @@ public class RoleController extends BaseController<Role,RoleVO> {
         role.setSystemDefault(Role.SYSTEMDEFAUFT_NO);
         role.setCreateTime(new Date());
         roleService.update(role);
-        return new HttpResult<>("新建成功");
+        return HttpResult.success("新建成功");
     }
 
     /**
@@ -86,7 +86,7 @@ public class RoleController extends BaseController<Role,RoleVO> {
             role.setRemark(roleRO.getRemark());
             role.setRoleType(roleRO.getRoleType());
             roleService.update(role);
-            return new HttpResult<>("修改成功");
+            return HttpResult.success("修改成功");
         }else {
             throw new RuntimeException("未查询到要更新的角色");
         }
@@ -101,6 +101,6 @@ public class RoleController extends BaseController<Role,RoleVO> {
     @RequestMapping(value = "listByType", method = RequestMethod.POST)
     public HttpResult<List<RoleVO>> listByType(Integer roleType) throws Exception {
         List<RoleVO> roleVOList = roleService.listByRoleType(roleType);
-        return new HttpResult<>(roleVOList);
+        return HttpResult.success(roleVOList);
     }
 }

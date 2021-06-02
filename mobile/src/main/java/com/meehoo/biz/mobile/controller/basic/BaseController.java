@@ -61,7 +61,7 @@ public abstract class BaseController<D, V> {
     public HttpResult<PageResult<V>> list(@RequestBody PageRO pageRO) throws Exception {
         PageCriteria pageCriteria = new PageCriteria(pageRO.getPage(), pageRO.getRows());
         PageResult<V> roleVOPageResult = baseService.listPage(clazzD, clazzV, pageCriteria, pageRO.getSearchConditionList());
-        return new HttpResult<>(roleVOPageResult);
+        return HttpResult.success(roleVOPageResult);
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class BaseController<D, V> {
     @RequestMapping(value = "listAll", method = RequestMethod.POST)
     public HttpResult<List<V>> listAll(@RequestBody SearchConditionListRO searchConditionListRO) throws Exception {
         List<V> resultList = baseService.listAll(clazzD, clazzV, searchConditionListRO.getSearchConditionList());
-        return new HttpResult<>(resultList);
+        return HttpResult.success(resultList);
     }
 
     /**
@@ -89,7 +89,7 @@ public abstract class BaseController<D, V> {
 //        Map<String, Object> map = new HashMap<>();
         String number = commonService.getBizObjectSerialNumber(clazzD.getSimpleName());
 //        map.put("data", number);
-        return new HttpResult<>(number);
+        return HttpResult.success(number);
     }
 
     /**
@@ -111,7 +111,7 @@ public abstract class BaseController<D, V> {
         if (BaseUtil.objectNotNull(domain)) {
             Constructor<V> VOconstructor = clazzV.getConstructor(new Class[]{clazzD});
             V voInstance = VOconstructor.newInstance(new Object[]{domain});
-            return new HttpResult<>(voInstance);
+            return HttpResult.success(voInstance);
         } else {
             throw new RuntimeException("未查询到" + idRO.getId() + "的对象:" + clazzD.getSimpleName());
         }
@@ -121,7 +121,7 @@ public abstract class BaseController<D, V> {
     @ResponseBody
     public HttpResult delete(@RequestBody IdRO idRO) throws Exception {
         baseService.deleteById(clazzD, idRO);
-        return new HttpResult();
+        return HttpResult.success();
     }
 
     /**
@@ -144,7 +144,7 @@ public abstract class BaseController<D, V> {
             Method mSetStatus = clazzD.getMethod("setStatus", int.class);
             mSetStatus.invoke(domain, changeStatusRO.getStatus());
             this.baseService.update(domain);
-            return new HttpResult();
+            return HttpResult.success();
         } else {
             throw new RuntimeException("未查询到" + changeStatusRO.getId() + "的对象:" + clazzD.getSimpleName());
 //                map.put("flag", "1");

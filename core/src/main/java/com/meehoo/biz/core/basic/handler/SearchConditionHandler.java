@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SearchConditionHandler {
-    public Object transform(String value,String fieldType) throws Exception{
+    public Object transform(String value,String fieldType){
         switch (fieldType) {
             case "String":
                 return value;

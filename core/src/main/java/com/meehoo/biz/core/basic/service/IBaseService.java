@@ -38,11 +38,11 @@ public interface IBaseService {
     <T> T queryById(Class<T> entityClass, Object id);
     <T> List<T> queryByIds(Class<?> clazz, Collection idList) ;
     <T> T queryByColumn(Class<?> clazz, String column, Object value) throws Exception;
-    <T> List<T> queryListByColumn(Class<T> clazz, String column, Object value) throws Exception;
+    <T> List<T> queryListByColumn(Class<T> clazz, String column, Object value);
     /***
      * 通用分页查询
      */
-    <D, V> PageResult<V> listPage(Class<D> domainClass, Class<V> voClass, PageCriteria pageCriteria, List<SearchCondition> searchConditionList) throws Exception;
+    <D, V> PageResult<V> listPage(Class<D> domainClass, Class<V> voClass, PageCriteria pageCriteria, List<SearchCondition> searchConditionList);
     /***
      * 通用列表查询
      */

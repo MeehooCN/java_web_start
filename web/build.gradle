@@ -34,6 +34,7 @@ dependencies {
 //            libraries.'security',
             libraries.'shiro',
             libraries.'jsp',
+            libraries. 'kaptcha'
     )
 //    testCompile group: 'junit', name: 'junit', version: '4.12'
 }

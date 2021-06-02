@@ -15,14 +15,14 @@ import lombok.Setter;
 public abstract class BaseEntityVO extends IdEntityVO {
     protected String name;
     protected String code;
-    protected int status;
-    protected String statusShow;
+    protected int isDelete;
+//    protected String statusShow;
 
     protected BaseEntityVO(BaseEntity baseEntity) {
         super(baseEntity);
         this.name = baseEntity.getName();
         this.code = baseEntity.getCode();
-        this.status = baseEntity.getStatus();
-        this.statusShow = baseEntity.getStatus() == BaseEntity.STATUS_ENABLE ? "启用" : "禁用";
+        this.isDelete = baseEntity.getIsDelete();
+//        this.statusShow = baseEntity.getIsDelete() == 0 ? "启用" : "禁用";
     }
 }

@@ -48,9 +48,9 @@ public class FileUploadController {
 //                    if(!StringUtil.stringNotNull(saveUrl)){
 //                        throw new RuntimeException("保存图片失败");
 //                    }else{
-//                        return new HttpResult<>(saveUrl);
+//                        return HttpResult.success(saveUrl);
 //                    }
-                    return new HttpResult<>();
+                    return HttpResult.success();
                 }else{
                     throw new RuntimeException("上传文件为空");
                 }
@@ -60,7 +60,7 @@ public class FileUploadController {
 
         }catch (Exception e){
             e.printStackTrace();
-            return new HttpResult<>(e);
+            return HttpResult.fail(e);
         }
     }
 

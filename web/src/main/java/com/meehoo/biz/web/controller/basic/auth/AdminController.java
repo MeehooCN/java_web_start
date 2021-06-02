@@ -7,8 +7,12 @@ import com.meehoo.biz.core.basic.domain.security.Admin;
 import com.meehoo.biz.core.basic.domain.security.Organization;
 import com.meehoo.biz.core.basic.handler.UserManager;
 import com.meehoo.biz.core.basic.param.HttpResult;
+import com.meehoo.biz.core.basic.param.PageCriteria;
+import com.meehoo.biz.core.basic.param.PageResult;
+import com.meehoo.biz.core.basic.param.SearchCondition;
 import com.meehoo.biz.core.basic.ro.IdRO;
 import com.meehoo.biz.core.basic.ro.security.AdminRO;
+import com.meehoo.biz.core.basic.ro.security.AdminSearchRO;
 import com.meehoo.biz.core.basic.ro.security.ModifyPasswordRO;
 import com.meehoo.biz.core.basic.service.security.IAdminService;
 import com.meehoo.biz.core.basic.service.security.IAuthMenuService;
@@ -26,6 +30,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,6 +55,25 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
         this.context_path = applicationValues.getContext_path_web();
     }
 
+    @ApiOperation("管理员列表条件查询")
+    @GetMapping("list")
+    public HttpResult listAdmin(AdminSearchRO ro) throws Exception {
+        PageCriteria pageCriteria = new PageCriteria(ro.getPage(), ro.getRows());
+        List<SearchCondition> searchConditions = new ArrayList<>();
+        SearchCondition searchCondition = new SearchCondition("isDelete", "equal", "0");
+        SearchCondition orgCondition = new SearchCondition("organizationCode", "like", ro.getOrganizationCode() + '%');
+        SearchCondition userNameCondition = new SearchCondition("userName", "like", ro.getUserName() + '%');
+        searchConditions.add(searchCondition);
+        searchConditions.add(orgCondition);
+        searchConditions.add(userNameCondition);
+        if (StringUtil.stringNotNull(ro.getName())){
+            SearchCondition condition = new SearchCondition("name","like",ro.getName());
+            searchConditions.add(condition);
+        }
+        PageResult<AdminVO> adminVOPageResult = adminService.listPage(Admin.class, AdminVO.class, pageCriteria, searchConditions);
+        return HttpResult.success(adminVOPageResult);
+    }
+
     @ApiOperation("重置密码")
     @RequestMapping(value = "resetPwd", method = RequestMethod.POST)
     @ResponseBody
@@ -57,7 +81,7 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
         Admin admin = adminService.queryById(Admin.class, idPO.getId());
         admin.setPassword(MD5Encrypt.EncryptPassword("123456"));
         adminService.update(admin);
-        return new HttpResult<>("操作成功，密码已被重置为123456");
+        return HttpResult.success("操作成功，密码已被重置为123456");
     }
 
     @ApiOperation("修改密码")
@@ -69,7 +93,7 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
             // 密码正确，修改密码
             admin.setPassword(MD5Encrypt.EncryptPassword(modifyPasswordVO.getNewPw()));
             adminService.update(admin);
-            return new HttpResult<>("修改密码成功！");
+            return HttpResult.success("修改密码成功！");
         } else {
             // 密码错误，提示
             throw new RuntimeException("原密码错误！");
@@ -83,7 +107,7 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
         admin.setRoleId(roleId);
         admin.setRoleName(roleName);
         adminService.update(admin);
-        return new HttpResult<>(true);
+        return HttpResult.success(true);
     }
 
     /**
@@ -132,7 +156,7 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
 //                .setHeadPic(vo.getHeadPic())
 //                .setUpdateTime(new Date());
 //        adminService.update(admin);
-        return new HttpResult();
+        return HttpResult.success();
     }
 
     @RequestMapping(value = "getCurrLoginAdmin", method = RequestMethod.POST)
@@ -147,7 +171,7 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
 //            subOrgList.add(new OrganizationVO(organization));
         AdminVO userVO = new AdminVO(user);
         userVO.setOrganizationVOS(VOUtil.convertDomainListToTempList(subOrgList,OrganizationVO.class));
-        return new HttpResult<>(userVO);
+        return HttpResult.success(userVO);
     }
 
     /**
@@ -161,7 +185,7 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
     @Override
     public HttpResult delete(@RequestBody IdRO ro) throws Exception{
         adminService.deleteById(Admin.class,ro.getId());
-        return new HttpResult();
+        return HttpResult.success();
     }
 
 
@@ -181,7 +205,7 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
             }
         }
 
-        return new HttpResult<>(menuListByAdminId);
+        return HttpResult.success(menuListByAdminId);
     }
 
 

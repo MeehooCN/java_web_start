@@ -54,7 +54,7 @@ public class UserController extends BaseController<User, UserVO> {
     @ApiOperation("查询人员,并按机构分类")
     @PostMapping("getListByOrg")
     public HttpResult<Map<String,List<OrganizationWithUserVO>>> getListByOrg() throws Exception {
-        return new HttpResult<>(userService.classifyByOrganization());
+        return HttpResult.success(userService.classifyByOrganization());
     }
 
     @ApiOperation("查询当前登录用户")
@@ -69,20 +69,20 @@ public class UserController extends BaseController<User, UserVO> {
 //        subOrgList.add(new OrganizationVO(organization));
         UserVO userVO = new UserVO(user);
         userVO.setOrganizationVOList(VOUtil.convertDomainListToTempList(subOrgList,OrganizationVO.class));
-        return new HttpResult<>(userVO);
+        return HttpResult.success(userVO);
     }
 
     @ApiOperation("新建用户信息")
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public HttpResult<String> create(@RequestBody UserRO userRO) throws Exception {
-        return new HttpResult<>(userService.createSaveUser(userRO));
+        return HttpResult.success(userService.createSaveUser(userRO));
     }
 
     @ApiOperation("新建/修改用户信息")
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public HttpResult<String> update(@RequestBody UserRO userRO) throws Exception {
         String msg = userService.updateSaveUser(userRO);
-        return new HttpResult<>(msg);
+        return HttpResult.success(msg);
     }
 
     @RequestMapping(value = "saveOrgAndRole", method = RequestMethod.POST)
@@ -97,7 +97,7 @@ public class UserController extends BaseController<User, UserVO> {
         user.setRoleName(role.getName());
         userService.update(user);
         userService.saveOrganizationRoleLink(organizationRoleRO);
-        return new HttpResult();
+        return HttpResult.success();
     }
 
     @ApiOperation("查询用户所属的机构列表")
@@ -107,7 +107,7 @@ public class UserController extends BaseController<User, UserVO> {
             throw new RuntimeException("用户id不能为空");
         }
         UserVO userOrgList = userService.getUserOrgList(idRO.getId());
-        return new HttpResult<>(userOrgList);
+        return HttpResult.success(userOrgList);
     }
 
     @ApiOperation("查询用户所属的机构及其对应的角色")
@@ -117,7 +117,7 @@ public class UserController extends BaseController<User, UserVO> {
             throw new RuntimeException("用户id不能为空");
         }
         List<UserOrganizationVO> userOrgAndRoleList = userService.getUserOrgAndRoleList(idRO.getId());
-        return new HttpResult<>(userOrgAndRoleList);
+        return HttpResult.success(userOrgAndRoleList);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class UserController extends BaseController<User, UserVO> {
     @RequestMapping(value = "list", method = RequestMethod.POST)
     public HttpResult<PageResult<UserVO>> list(@RequestBody PageRO pagePO) throws Exception {
         PageResult<UserVO> userVOPageResult = userService.listPage(pagePO);
-        return new HttpResult<>(userVOPageResult);
+        return HttpResult.success(userVOPageResult);
     }
 
     @Override
@@ -133,14 +133,14 @@ public class UserController extends BaseController<User, UserVO> {
     @PostMapping("listAll")
     public HttpResult<List<UserVO>> listAll(@RequestBody SearchConditionListRO searchConditionListRO) throws Exception {
         List<UserVO> userVOS = userService.listAll(searchConditionListRO);
-        return new HttpResult<>(userVOS);
+        return HttpResult.success(userVOS);
     }
 
     @ApiOperation("查询所有,自定义机构")
     @PostMapping("listAllByOrg")
     public HttpResult<List<UserVO>> listAllByOrg(@RequestBody SearchConditionListRO searchConditionListRO) throws Exception {
         List<UserVO> userVOS = adminService.listAll(User.class,UserVO.class,searchConditionListRO.getSearchConditionList());
-        return new HttpResult<>(userVOS);
+        return HttpResult.success(userVOS);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class UserController extends BaseController<User, UserVO> {
             throw new RuntimeException("请选择要查询的用户");
         }
         UserVO userVO = userService.getById(idRO.getId());
-        return new HttpResult<>(userVO);
+        return HttpResult.success(userVO);
     }
 
     @ApiOperation("查询用户在某个机构里拥有的角色")
@@ -161,56 +161,46 @@ public class UserController extends BaseController<User, UserVO> {
 //        if (controllerMessage.isNotSuccessMsg())
 //            throw new RuntimeException((String)controllerMessage.toMap().get("msg"));
         List<RoleVO> userHasRoleList = userService.getUserHasRoleList(userOrganizationRO.getUserId(), userOrganizationRO.getOrganizationId());
-        return new HttpResult<>(userHasRoleList);
+        return HttpResult.success(userHasRoleList);
     }
 
     @ApiOperation("重置密码")
     @PostMapping("resetPassword")
     public HttpResult<String> resetPassword(@RequestBody IdRO idPO) throws Exception {
-        try {
-            User user = userService.queryById(User.class, idPO.getId());
-            if (BaseUtil.objectNotNull(user)) {
-                user.setPassword(MD5Encrypt.EncryptPassword("123456"));
-                userService.update(user);
-                return new HttpResult<>("操作成功，密码已被重置为123456");
-            } else {
-                throw new RuntimeException("未查询到当前用户");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new HttpResult<>(e);
+        User user = userService.queryById(User.class, idPO.getId());
+        if (BaseUtil.objectNotNull(user)) {
+            user.setPassword(MD5Encrypt.EncryptPassword("123456"));
+            userService.update(user);
+            return HttpResult.success("操作成功，密码已被重置为123456");
+        } else {
+            throw new RuntimeException("未查询到当前用户");
         }
     }
 
     @ApiOperation("修改密码")
     @PostMapping(value = "modifyPassword")
-    public HttpResult<String> modifyPassword(@RequestBody ModifyPasswordRO modifyPasswordRO) {
-        try {
-            Object object = UserManager.getCurrent();
-            if(object instanceof Admin){
-                Admin admin = (Admin) object;
-                if (MD5Encrypt.CheckEncryptPassword(modifyPasswordRO.getOldPw(), admin.getPassword())) {
-                    // 密码正确，修改密码
-                    return judgeAdmin(admin, modifyPasswordRO.getNewPw(), modifyPasswordRO.getConfirmNewPw());
-                }else{
-                    // 密码错误，提示
-                    throw new RuntimeException("原密码错误!");
-                }
-            }else if(object instanceof User){
-                User user = (User) object;
-                if (MD5Encrypt.CheckEncryptPassword(modifyPasswordRO.getOldPw(), user.getPassword())) {
-                    // 密码正确，修改密码
-                    return judgeUser(user, modifyPasswordRO.getNewPw(), modifyPasswordRO.getConfirmNewPw());
-                }else{
-                    // 密码错误，提示
-                    throw new RuntimeException("原密码错误!");
-                }
+    public HttpResult<String> modifyPassword(@RequestBody ModifyPasswordRO modifyPasswordRO) throws Exception{
+        Object object = UserManager.getCurrent();
+        if(object instanceof Admin){
+            Admin admin = (Admin) object;
+            if (MD5Encrypt.CheckEncryptPassword(modifyPasswordRO.getOldPw(), admin.getPassword())) {
+                // 密码正确，修改密码
+                return judgeAdmin(admin, modifyPasswordRO.getNewPw(), modifyPasswordRO.getConfirmNewPw());
             }else{
-                throw new RuntimeException("请核对用户");
+                // 密码错误，提示
+                throw new RuntimeException("原密码错误!");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new HttpResult<>(e);
+        }else if(object instanceof User){
+            User user = (User) object;
+            if (MD5Encrypt.CheckEncryptPassword(modifyPasswordRO.getOldPw(), user.getPassword())) {
+                // 密码正确，修改密码
+                return judgeUser(user, modifyPasswordRO.getNewPw(), modifyPasswordRO.getConfirmNewPw());
+            }else{
+                // 密码错误，提示
+                throw new RuntimeException("原密码错误!");
+            }
+        }else{
+            throw new RuntimeException("请核对用户");
         }
     }
 
@@ -218,7 +208,7 @@ public class UserController extends BaseController<User, UserVO> {
         if(password.equals(confirmPassword)){
             user.setPassword(MD5Encrypt.EncryptPassword(password));
             userService.update(user);
-            return new HttpResult<>("修改成功");
+            return HttpResult.success("修改成功");
         }else{
             throw new RuntimeException("两次密码必须一致");
         }
@@ -228,7 +218,7 @@ public class UserController extends BaseController<User, UserVO> {
         if(password.equals(confirmPassword)){
             admin.setPassword(MD5Encrypt.EncryptPassword(password));
             adminService.update(admin);
-            return new HttpResult<>("修改成功");
+            return HttpResult.success("修改成功");
         }else{
             throw new RuntimeException("两次密码必须一致");
         }
@@ -241,7 +231,7 @@ public class UserController extends BaseController<User, UserVO> {
 //        if (BaseUtil.stringNotNull(userName)) {
 //            User user = userService.getUserByName(userName);
 //            if (user == null) {
-//                return new HttpResult<>("用户名可用");
+//                return HttpResult.success("用户名可用");
 //            } else {
 //                throw new RuntimeException("用户名已被使用");
 //            }

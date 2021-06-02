@@ -69,7 +69,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
             searchConditionList.add(new SearchCondition("status","=","1"));
         }
         PageResult<V>       pageResult = baseService.listPage(clazzD, clazzV, pageCriteria, searchConditionList);
-        return new HttpResult<>(pageResult);
+        return HttpResult.success(pageResult);
     }
 
     @ApiOperation("基础__分页查询")
@@ -78,7 +78,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
     protected HttpResult<PageResult<V>> listWithDelete(@RequestBody PageRO pagePO) throws Exception {
         PageCriteria pageCriteria     = new PageCriteria(pagePO.getPage(), pagePO.getRows());
         PageResult<V>       pageResult = baseService.listPage(clazzD, clazzV, pageCriteria, pagePO.getSearchConditionList());
-        return new HttpResult<>(pageResult);
+        return HttpResult.success(pageResult);
     }
 
     /**
@@ -94,7 +94,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
             searchConditionList.add(new SearchCondition("status","=","1"));
         }
         List<V>             resultList = baseService.listAll(clazzD, clazzV, searchConditionList);
-        return new HttpResult<>(resultList);
+        return HttpResult.success(resultList);
     }
 
     @ApiOperation("基础__查询所有")
@@ -102,7 +102,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
     @ResponseBody
     protected HttpResult<List<V>> listAllWithDelete(@RequestBody SearchConditionListRO searchConditionListRO) throws Exception {
         List<V>             resultList = baseService.listAll(clazzD, clazzV, searchConditionListRO.getSearchConditionList());
-        return new HttpResult<>(resultList);
+        return HttpResult.success(resultList);
     }
 
     @ApiOperation("基础__根据id获取实体类")
@@ -121,7 +121,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
         if (BaseUtil.objectNotNull(domain)) {
             Constructor<V> VOconstructor = clazzV.getConstructor(new Class[]{clazzD});
             V              voInstance    = VOconstructor.newInstance(new Object[]{domain});
-            return new HttpResult<>(voInstance);
+            return HttpResult.success(voInstance);
         } else {
             throw new RuntimeException("未查询到" + idRO.getId() + "的对象:" + clazzD.getSimpleName());
         }
@@ -132,7 +132,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
     @ResponseBody
     public HttpResult delete(@RequestBody IdRO idRO) throws Exception {
         baseService.deleteById( clazzD, idRO.getId());
-        return new HttpResult();
+        return HttpResult.success();
     }
 
     /**
@@ -156,7 +156,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
             Method mSetStatus = clazzD.getMethod("setStatus", int.class);
             mSetStatus.invoke(domain, changeStatusRO.getStatus());
             this.baseService.update(domain);
-            return new HttpResult(true);
+            return HttpResult.success(Boolean.TRUE);
         } else {
             throw new RuntimeException("未查询到" + changeStatusRO.getId() + "的对象:" + clazzD.getSimpleName());
 //                map.put("flag", "1");

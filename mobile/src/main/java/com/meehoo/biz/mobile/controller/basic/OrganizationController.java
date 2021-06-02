@@ -47,7 +47,7 @@ public class OrganizationController extends BaseController<Organization, Organiz
 
         organizationService.createOrUpdate(map, organizationRO);
 
-        return new HttpResult<>();
+        return HttpResult.success();
     }
 
     @RequestMapping(value = "update", method = RequestMethod.POST)
@@ -57,7 +57,7 @@ public class OrganizationController extends BaseController<Organization, Organiz
 //            throw new RuntimeException("请输入机构名称");
         map = organizationService.createOrUpdate(map, organizationRO);
 
-        return new HttpResult<>();
+        return HttpResult.success();
     }
 
     /**
@@ -68,7 +68,7 @@ public class OrganizationController extends BaseController<Organization, Organiz
     @RequestMapping(value = "listAllForAdmin", method = RequestMethod.POST)
     public HttpResult<OrganizationTreeTotalVO> listAllForAdmin() throws Exception {
         OrganizationTreeTotalVO organizationTreeTotalVO = organizationService.listAll();
-        return new HttpResult<>(organizationTreeTotalVO);
+        return HttpResult.success(organizationTreeTotalVO);
     }
 
 
@@ -79,7 +79,7 @@ public class OrganizationController extends BaseController<Organization, Organiz
     public HttpResult<List<OrganizationVO>> listRoot() throws Exception {
         List<Organization> organizations = organizationService.listRoot();
         List<OrganizationVO> organizationVOS = VOUtil.convertDomainListToTempList(organizations, OrganizationVO.class);
-        return new HttpResult<>(organizationVOS);
+        return HttpResult.success(organizationVOS);
     }
 
     /**
@@ -94,7 +94,7 @@ public class OrganizationController extends BaseController<Organization, Organiz
         if (StringUtil.stringIsNull(idRO.getId()))
             throw new RuntimeException("请选择要查询的用户");
         List<OrganizationTreeVO> organizationTreeVOS = organizationService.listAll(idRO.getId());
-        return new HttpResult<>(organizationTreeVOS);
+        return HttpResult.success(organizationTreeVOS);
     }
 
     /**
@@ -107,7 +107,7 @@ public class OrganizationController extends BaseController<Organization, Organiz
     @RequestMapping(value = "listSubOrg", method = RequestMethod.POST)
     public HttpResult<List<OrganizationVO>> listSubOrg(@RequestBody IdRO idRO) throws Exception {
         List<OrganizationVO> voList = organizationService.getSubOrgList(idRO.getId());
-        return new HttpResult<>(voList);
+        return HttpResult.success(voList);
     }
 
 
@@ -122,7 +122,7 @@ public class OrganizationController extends BaseController<Organization, Organiz
     public HttpResult< List<OrganizationVO>> listSubOrgByUserId(@RequestBody IdRO idRO) throws Exception {
         String id = UserManager.getCurrentUser().getId();
         List<OrganizationVO> organizationVOS = organizationService.queryByUserId(id);
-        return new HttpResult<>(organizationVOS);
+        return HttpResult.success(organizationVOS);
     }
 
     /**
@@ -135,13 +135,13 @@ public class OrganizationController extends BaseController<Organization, Organiz
     @RequestMapping(value = "listOrgAndSubOrg", method = RequestMethod.POST)
     public HttpResult< List<OrganizationVO>> listOrgAndSubOrg(@RequestBody AuthenticationRO authenticationRO) throws Exception {
         List<OrganizationVO> voList = organizationService.listOrgAndSubOrg(authenticationRO.getCurrOrgId());
-        return new HttpResult<>(voList);
+        return HttpResult.success(voList);
     }
 
     @RequestMapping(value = "delete", method = RequestMethod.POST)
     public HttpResult delete(@RequestBody IdRO idRO) throws Exception {
         organizationService.delete(idRO.getId());
-        return new HttpResult();
+        return HttpResult.success();
     }
 
     @ApiOperation("根据名称类型模糊查询单位")
@@ -153,6 +153,6 @@ public class OrganizationController extends BaseController<Organization, Organiz
         if (StringUtil.stringNotNull(typeName))
             conditionList.add(new SearchCondition("projectType",typeName,"like"));
         List<OrganizationVO> organizationVOS = organizationService.listAll(Organization.class, OrganizationVO.class, conditionList);
-        return new HttpResult<>(organizationVOS);
+        return HttpResult.success(organizationVOS);
     }
 }

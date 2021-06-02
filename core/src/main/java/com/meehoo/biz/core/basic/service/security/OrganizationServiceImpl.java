@@ -57,7 +57,7 @@ public class OrganizationServiceImpl extends BaseService implements IOrganizatio
             thisOrg.setContactPhone(organizationRO.getContactPhone());
             thisOrg.setProOrgType(organizationRO.getProOrgType());
             thisOrg.setDescription(organizationRO.getDescription());
-            thisOrg.setStatus(organizationRO.getStatus());
+            thisOrg.setIsDefault(organizationRO.getIsDelete());
         } else {
             thisOrg = new Organization();
             thisOrg.setCode(getOrgCode(organizationRO.getParentOrgCode(),organizationRO.getParentOrgId()));
@@ -67,7 +67,7 @@ public class OrganizationServiceImpl extends BaseService implements IOrganizatio
             thisOrg.setContactPhone(organizationRO.getContactPhone());
             thisOrg.setProOrgType(organizationRO.getProOrgType());
             thisOrg.setDescription(organizationRO.getDescription());
-            thisOrg.setStatus(organizationRO.getStatus());
+            thisOrg.setIsDelete(organizationRO.getIsDelete());
             Organization parentOrg = StringUtil.stringNotNull(organizationRO.getParentOrgId()) ?
                     this.queryById(Organization.class, organizationRO.getParentOrgId()) : null;
             if (BaseUtil.objectNotNull(parentOrg)) {

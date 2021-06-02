@@ -52,6 +52,6 @@ public class AdminRoleController extends BaseControllerPlus<AdminToRole,AdminToR
         });
 
         adminService.batchSave(adminToRoleList);
-        return new HttpResult<>("上传成功");
+        return HttpResult.success("上传成功");
     }
 }

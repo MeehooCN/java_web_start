@@ -114,7 +114,7 @@ public class ControllerMethodInvokedHandler {
     }
 
     private HttpResult handleException(Throwable e){
-        HttpResult httpResult = new HttpResult(e);
+        HttpResult httpResult = HttpResult.fail(e);
         if (e instanceof NotLoginException){
             httpResult.setFlag(HttpResult.Flag_NotLogin);
             httpResult.setMsg("未登录");

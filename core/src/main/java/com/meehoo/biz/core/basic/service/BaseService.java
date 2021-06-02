@@ -181,7 +181,7 @@ public class BaseService implements IBaseService {
         return null;
     }
     @Override
-    public <T> List<T> queryListByColumn(Class<T> clazz,@NonNull String column, Object value) throws Exception {
+    public <T> List<T> queryListByColumn(Class<T> clazz,@NonNull String column, Object value){
         String hql = "FROM " + clazz.getSimpleName() + " where " + column + "=?";
         return baseDao.queryByJPQL(hql,value);
     }
@@ -214,7 +214,7 @@ public class BaseService implements IBaseService {
     }
 
     @SuppressWarnings({"unchecked"})
-    public <V> PageResult<V> page(DetachedCriteria dc, PageCriteria pc, Class<V> voClass) throws Exception {
+    public <V> PageResult<V> page(DetachedCriteria dc, PageCriteria pc, Class<V> voClass) {
         dc.setProjection(Projections.rowCount());// 设置搜索策略:分页查询满足条件的总记录数
         Long total = count(dc);
         List<V> list = null;
@@ -255,7 +255,7 @@ public class BaseService implements IBaseService {
      */
     @Override
     public <D, V> PageResult<V> listPage(Class<D> domainClass, Class<V> voClass,
-                                         PageCriteria pageCriteria, List<SearchCondition> searchConditionList) throws Exception {
+                                         PageCriteria pageCriteria, List<SearchCondition> searchConditionList){
         DetachedCriteria dc = DetachedCriteria.forClass(domainClass);
         this.appendRestrictions(domainClass, dc, searchConditionList);
         return this.page(dc, pageCriteria, voClass);
@@ -303,7 +303,7 @@ public class BaseService implements IBaseService {
 
 
 
-    private String getClassFeildGetterReturnType(Class domainClass, String feildName, boolean retSimpleName) throws Exception {
+    private String getClassFeildGetterReturnType(Class domainClass, String feildName, boolean retSimpleName) {
         String fNameFirstLetter = feildName.substring(0, 1).toUpperCase();
         String getMethodName = "get";
         if (feildName.length() > 1) {
@@ -311,11 +311,17 @@ public class BaseService implements IBaseService {
         } else {
             getMethodName = getMethodName + fNameFirstLetter;
         }
-        Method method = domainClass.getMethod(getMethodName);
+        Method method = null;
+        try {
+            method = domainClass.getMethod(getMethodName);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            throw new RuntimeException("没有对应方法");
+        }
         return retSimpleName ? method.getReturnType().getSimpleName() : method.getReturnType().getName();
     }
 
-    protected void appendRestrictions(Class domainClass, DetachedCriteria criteria, List<SearchCondition> searchConditionList) throws Exception {
+    protected void appendRestrictions(Class domainClass, DetachedCriteria criteria, List<SearchCondition> searchConditionList) {
         for (SearchCondition sc : searchConditionList) {
             if (StringUtil.stringNotNull(sc.getName()) && StringUtil.stringNotNull(sc.getOperand())) {
                 String name = sc.getName();
@@ -331,12 +337,18 @@ public class BaseService implements IBaseService {
                     }
                     String fieldName = name.substring(indexDot + 1, name.length());
                     String className = getClassFeildGetterReturnType(domainClass, aliasName, false);
-                    feildTypeName = getClassFeildGetterReturnType(Class.forName(className), fieldName, true);
+                    try {
+                        feildTypeName = getClassFeildGetterReturnType(Class.forName(className), fieldName, true);
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                        throw new RuntimeException("无对应类");
+                    }
                 } else {
                     feildTypeName = getClassFeildGetterReturnType(domainClass, name, true);
                 }
 
-                Object transform = searchConditionHandler.transform(value, feildTypeName);
+                Object transform = null;
+                transform = searchConditionHandler.transform(value, feildTypeName);
                 searchConditionHandler.handle(name,transform,sc.getOperand(),criteria);
             }
         }

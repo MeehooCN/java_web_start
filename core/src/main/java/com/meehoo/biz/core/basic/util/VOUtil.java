@@ -4,6 +4,7 @@ import com.meehoo.biz.core.basic.param.PageResult;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +45,7 @@ public class VOUtil {
 
     @SuppressWarnings("unchecked")
     public static <V, D> List<V> convertDomainListToTempList(List<D> domainList,
-                                                             Class<V> voClass) throws Exception {
+                                                             Class<V> voClass) {
         if (CollectionUtils.isEmpty(domainList)) {
             return new ArrayList<V>(0);
         } else {
@@ -56,14 +57,19 @@ public class VOUtil {
             } else {
 
                 // 获取temp对象的构造函数
-                Constructor<V> voconstructor = voClass
-                        .getConstructor(new Class[]{dClass});
-
-                for (int i = 0; i < size; i++) {
-                    tempList.add(voconstructor
-                            .newInstance(new Object[]{domainList.get(i)}));
+                Constructor<V> voconstructor = null;
+                try {
+                    voconstructor = voClass
+                            .getConstructor(new Class[]{dClass});
+                    for (int i = 0; i < size; i++) {
+                        tempList.add(voconstructor
+                                .newInstance(new Object[]{domainList.get(i)}));
+                    }
+                    return tempList;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e.getMessage());
                 }
-                return tempList;
             }
         }
     }

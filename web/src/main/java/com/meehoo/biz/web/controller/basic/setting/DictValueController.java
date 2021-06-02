@@ -67,10 +67,10 @@ public class DictValueController extends BaseController<DictValue,DictValueVO> {
             newValue.setDictType(dictType);
             newValue.setId(null);
             dictValueService.save(newValue);
-            return new HttpResult<>();
+            return HttpResult.success();
         } catch (Exception e) {
             e.printStackTrace();
-            return new HttpResult<>(e);
+            return HttpResult.success(e);
         }
     }
 
@@ -78,22 +78,17 @@ public class DictValueController extends BaseController<DictValue,DictValueVO> {
      * 编辑
      */
     @RequestMapping(value = "update", method = RequestMethod.POST)
-    public HttpResult update(@RequestBody DictValueRO dictValueRO) {
+    public HttpResult update(@RequestBody DictValueRO dictValueRO) throws Exception{
         Map<String, Object> returnMap = new HashMap<>();
-        try {
-            if(!StringUtil.stringNotNull(dictValueRO.getId())){
-                throw new RuntimeException("未查询到当前对象");
-            }
-
-            DictValue oldPM = dictValueService.queryById(DictValue.class, dictValueRO.getId());
-            oldPM.setMkey(dictValueRO.getMkey());
-            oldPM.setMvalue(dictValueRO.getMvalue());
-            dictValueService.update(oldPM);
-            return new HttpResult();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new HttpResult(e);
+        if(!StringUtil.stringNotNull(dictValueRO.getId())){
+            throw new RuntimeException("未查询到当前对象");
         }
+
+        DictValue oldPM = dictValueService.queryById(DictValue.class, dictValueRO.getId());
+        oldPM.setMkey(dictValueRO.getMkey());
+        oldPM.setMvalue(dictValueRO.getMvalue());
+        dictValueService.update(oldPM);
+        return HttpResult.success();
     }
 
     /**
@@ -103,14 +98,9 @@ public class DictValueController extends BaseController<DictValue,DictValueVO> {
     @ApiOperation("用户详情")
     @RequestMapping(value = "getByTypeModuleNumber", method = RequestMethod.POST)
     public HttpResult<List<DictValueVO>> getByTypeModuleNumber(@RequestBody DictTypeModuleNumberRO dictTypeModuleNumberRO) throws Exception {
-        try {
-            List<DictValueVO>  dictValueVOList = dictValueService.getByTypeModuleNumber(dictTypeModuleNumberRO.getModule(),
-                    dictTypeModuleNumberRO.getNumber());
-            return new HttpResult<>(dictValueVOList);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new HttpResult<>(e);
-        }
+        List<DictValueVO>  dictValueVOList = dictValueService.getByTypeModuleNumber(dictTypeModuleNumberRO.getModule(),
+                dictTypeModuleNumberRO.getNumber());
+        return HttpResult.success(dictValueVOList);
     }
 
     /**
@@ -120,10 +110,10 @@ public class DictValueController extends BaseController<DictValue,DictValueVO> {
 //    public HttpResult<List<DictValueVO>> getByTypeNumber(@RequestBody NumberRO numberRO) throws Exception {
 //        try {
 //            List<DictValueVO>  dictValueVOList = dictValueService.getByTypeNumber(numberRO.getNumber());
-//            return new HttpResult<>(dictValueVOList);
+//            return HttpResult.success(dictValueVOList);
 //        } catch (Exception e) {
 //            e.printStackTrace();
-//            return new HttpResult<>(e);
+//            return HttpResult.success(e);
 //        }
 //    }
 
@@ -132,13 +122,8 @@ public class DictValueController extends BaseController<DictValue,DictValueVO> {
      */
     @RequestMapping(value = "getByTypeId", method = RequestMethod.POST)
     public HttpResult<List<DictValueVO>>   getByTypeId(@RequestBody IdRO idRO) throws Exception {
-        try {
-            List<DictValueVO>  dictValueVOList = dictValueService.getByTypeId(idRO.getId());
-            return new HttpResult<>(dictValueVOList);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new HttpResult<>(e);
-        }
+        List<DictValueVO>  dictValueVOList = dictValueService.getByTypeId(idRO.getId());
+        return HttpResult.success(dictValueVOList);
     }
 
     /**
@@ -146,14 +131,9 @@ public class DictValueController extends BaseController<DictValue,DictValueVO> {
      */
     @RequestMapping(value = "pageByTypeId", method = RequestMethod.POST)
     public HttpResult<PageResult<DictValueVO>>   pageByTypeId(PageCriteria pageCriteria, String typeId) throws Exception {
-        try {
-            List<SearchCondition> searchConditions = new ArrayList<>();
-            searchConditions.add(new SearchCondition("dictType.id",typeId,"="));
-            PageResult<DictValueVO> dictValueVOList = dictValueService.listPage(DictValue.class,DictValueVO.class,pageCriteria,searchConditions);
-            return new HttpResult<>(dictValueVOList);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new HttpResult<>(e);
-        }
+        List<SearchCondition> searchConditions = new ArrayList<>();
+        searchConditions.add(new SearchCondition("dictType.id",typeId,"="));
+        PageResult<DictValueVO> dictValueVOList = dictValueService.listPage(DictValue.class,DictValueVO.class,pageCriteria,searchConditions);
+        return HttpResult.success(dictValueVOList);
     }
 }

@@ -64,7 +64,7 @@ public abstract class BaseControllerPlus<D extends IdEntity, V extends IdEntityV
 //        }
         D domain = baseService.createOrUpdate(clazzD, ro);
         String idProperty = (String) ReflectUtil.getIdProperty(domain);
-        return new HttpResult<>(idProperty);
+        return HttpResult.success(idProperty);
     }
 
     @ApiOperation("基础__通用更改接口")
@@ -74,10 +74,10 @@ public abstract class BaseControllerPlus<D extends IdEntity, V extends IdEntityV
 //        if (checkMethod != null) {
 //            Map<String, Object> map = (Map<String, Object>) ReflectUtil.invokeMethod(checkMethod, vo);
 //            if (BaseUtil.mapContainsErrorFlag(map))
-//                return new HttpResult<>(false);
+//                return HttpResult.success(false);
 //        }
         baseService.createOrUpdate(clazzD, ro);
-        return new HttpResult<>(true);
+        return HttpResult.success(true);
     }
 
     //    @ApiOperation("修改某些字段,key是字段名，value是修改后的值")
@@ -87,10 +87,10 @@ public abstract class BaseControllerPlus<D extends IdEntity, V extends IdEntityV
 //        if (checkMethod != null) {
 //            Map<String, Object> map = (Map<String, Object>) ReflectUtil.invokeMethod(checkMethod, vo);
 //            if (BaseUtil.mapContainsErrorFlag(map))
-//                return new HttpResult<>(false);
+//                return HttpResult.success(false);
 //        }
         baseService.updateField(clazzD, updateFiledRO);
-        return new HttpResult<>(true);
+        return HttpResult.success(true);
     }
 
 }

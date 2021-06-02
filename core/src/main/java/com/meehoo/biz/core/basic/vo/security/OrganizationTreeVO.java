@@ -38,7 +38,7 @@ public class OrganizationTreeVO {
     private String parentOrgName;//上级机构名称
 
     private String codeRule;
-    private int status;
+    private int isDelete;
 
     private List<OrganizationTreeVO> children;
 
@@ -59,6 +59,6 @@ public class OrganizationTreeVO {
             this.parentOrgName =organization.getParentOrg().getName();
         }
         this.children = VOUtil.convertDomainListToTempList(organization.getSubOrgList(), OrganizationTreeVO.class);
-        this.status = organization.getStatus();
+        this.isDelete = organization.getIsDefault();
     }
 }

@@ -72,7 +72,7 @@ public abstract class BaseControllerPlus<D extends IdEntity, V, R> {
     public HttpResult<PageResult<V>> list(@RequestBody PageRO pagePO) throws Exception {
         PageCriteria pageCriteria = new PageCriteria(pagePO.getPage(), pagePO.getRows());
         PageResult<V> roleVOPageResult = baseService.listPage(clazzD, clazzV, pageCriteria, pagePO.getSearchConditionList());
-        return new HttpResult<>(roleVOPageResult);
+        return HttpResult.success(roleVOPageResult);
     }
 
     /**
@@ -85,7 +85,7 @@ public abstract class BaseControllerPlus<D extends IdEntity, V, R> {
     @RequestMapping(value = "listAll", method = RequestMethod.POST)
     public HttpResult<List<V>> listAll(@RequestBody SearchConditionListRO searchConditionListRO) throws Exception {
         List<V> resultList = baseService.listAll(clazzD, clazzV, searchConditionListRO.getSearchConditionList());
-        return new HttpResult<>(resultList);
+        return HttpResult.success(resultList);
     }
 
     /**
@@ -100,7 +100,7 @@ public abstract class BaseControllerPlus<D extends IdEntity, V, R> {
 //        Map<String, Object> map = new HashMap<>();
         String number = commonService.getBizObjectSerialNumber(clazzD.getSimpleName());
 //        map.put("data", number);
-        return new HttpResult<>(number);
+        return HttpResult.success(number);
     }
 
     /**
@@ -122,7 +122,7 @@ public abstract class BaseControllerPlus<D extends IdEntity, V, R> {
         if (BaseUtil.objectNotNull(domain)) {
             Constructor<V> VOconstructor = clazzV.getConstructor(new Class[]{clazzD});
             V voInstance = VOconstructor.newInstance(new Object[]{domain});
-            return new HttpResult<>(voInstance);
+            return HttpResult.success(voInstance);
         } else {
             throw new RuntimeException("未查询到" + idPO.getId() + "的对象:" + clazzD.getSimpleName());
         }
@@ -138,7 +138,7 @@ public abstract class BaseControllerPlus<D extends IdEntity, V, R> {
     @RequestMapping(value = "delete", method = RequestMethod.POST)
     public HttpResult delete(@RequestBody IdRO idRO) throws Exception {
         baseService.deleteById(clazzD, idRO);
-        return new HttpResult();
+        return HttpResult.success();
     }
 
     @RequestMapping(value = "changeStatus", method = RequestMethod.POST)
@@ -160,7 +160,7 @@ public abstract class BaseControllerPlus<D extends IdEntity, V, R> {
 //                map.put("flag", "1");
 //                map.put("msg", "未查询到" + changeStatusRO.getId() + "的对象:" + clazzD.getSimpleName());
         }
-        return new HttpResult();
+        return HttpResult.success();
     }
 
     /**
@@ -179,7 +179,7 @@ public abstract class BaseControllerPlus<D extends IdEntity, V, R> {
             Map<String, Object> map = (Map<String, Object>) ReflectUtil.invokeMethod(checkMethod, ro);
         }
         D domain = baseService.createOrUpdate(clazzD, ro);
-        return new HttpResult<>(domain.getId());
+        return HttpResult.success(domain.getId());
     }
 
     /**
@@ -196,7 +196,7 @@ public abstract class BaseControllerPlus<D extends IdEntity, V, R> {
             Map<String, Object> map = (Map<String, Object>) ReflectUtil.invokeMethod(checkMethod, ro);
         }
         D domain = baseService.createOrUpdate(clazzD, ro);
-        return new HttpResult<>(domain.getId());
+        return HttpResult.success(domain.getId());
     }
 
 }

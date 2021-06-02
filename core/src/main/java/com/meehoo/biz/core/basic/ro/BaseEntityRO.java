@@ -14,5 +14,5 @@ public class BaseEntityRO extends IdRO {
 
     protected String name;
 
-    protected Integer status;
+    protected Integer isDelete;
 }

@@ -61,7 +61,7 @@ public class FileController {
                     if(!StringUtil.stringNotNull(saveUrl)){
                         throw new RuntimeException("保存图片失败");
                     }else{
-                        return new HttpResult<>(saveUrl);
+                        return HttpResult.success(saveUrl);
                     }
                 }else{
                     throw new RuntimeException("上传文件为空");
@@ -71,7 +71,7 @@ public class FileController {
             }
         }catch (Exception e){
             e.printStackTrace();
-            return new HttpResult<>(e);
+            return HttpResult.fail(e);
         }
 
     }

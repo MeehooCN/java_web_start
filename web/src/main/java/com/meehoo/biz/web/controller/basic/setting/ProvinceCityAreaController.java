@@ -112,10 +112,10 @@ public class ProvinceCityAreaController {
         try {
             ProvinceCityAreaSelectVO provinceCityAreaSelectVO = provinceCityAreaService.getProvinceCityAreaSelectVOForApi(provinceName);
             List<ProvinceSelectVO> provinceSelectVOList = provinceCityAreaSelectVO.getProvinceSelectVOList();
-            return new HttpResult<>(provinceSelectVOList);
+            return HttpResult.success(provinceSelectVOList);
         } catch (Exception e) {
             e.printStackTrace();
-            return new HttpResult<>(e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -244,10 +244,10 @@ public class ProvinceCityAreaController {
                 }
             }
             needFrontProvinceList.addAll(behindProvinceList);
-            return new HttpResult<>(needFrontProvinceList);
+            return HttpResult.success(needFrontProvinceList);
         } catch (Exception e) {
             e.printStackTrace();
-            return new HttpResult<>(e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -383,13 +383,11 @@ public class ProvinceCityAreaController {
     @GetMapping("getNextSingleMenu")
     @ResponseBody
     public HttpResult<ProvinceCityAreaSelectVO> getNextSingleMenu(String code){
-        HttpResult<ProvinceCityAreaSelectVO> result = new HttpResult<>();
         try {
             ProvinceCityAreaSelectVO provinceCityAreaSelectVO = null;
             if(code == null){
                 //如果编码为空，说明查询的是省
                 provinceCityAreaSelectVO = provinceCityAreaService.getOnlyProvince();
-                result.setData(provinceCityAreaSelectVO);
             }else if(code.indexOf("a00") > -1 && code.indexOf("c00") > -1){
                 //如果编码包含a00和c00，说明查询的是市
                 String provinceCode = code.substring(0, 3);
@@ -400,14 +398,11 @@ public class ProvinceCityAreaController {
                 String cityCode = code.substring(3,6);
                 provinceCityAreaSelectVO = provinceCityAreaService.getOnlyArea(provinceCode, cityCode);
             }
-            result.setData(provinceCityAreaSelectVO);
-            result.setFlag(HttpResult.Flag_Success);
-            result.setMsg("成功");
+            return HttpResult.success(provinceCityAreaSelectVO);
         }catch (Exception e){
             e.printStackTrace();
-            return new HttpResult<>(e);
+            throw new RuntimeException(e.getMessage());
         }
-        return result;
     }
 
 

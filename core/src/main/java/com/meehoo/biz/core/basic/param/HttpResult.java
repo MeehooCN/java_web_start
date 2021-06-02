@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @date 2019-07-09
  */
 @Data
-public class HttpResult<T> implements Serializable{
+public final class HttpResult<T> implements Serializable{
     public static final int Flag_Success = 0;
     public static final int Flag_Fail= 1;
     public static final int Flag_NotLogin = 4004;
@@ -22,19 +22,38 @@ public class HttpResult<T> implements Serializable{
     private String msg;
     private int flag;
 
-    public HttpResult() {
+    HttpResult() {
         msg = "成功";
         flag = Flag_Success;
     }
 
-    public HttpResult(T data) {
+    HttpResult(T data) {
         this.data = data;
         msg = "成功";
         flag = Flag_Success;
     }
 
-    public HttpResult(Throwable ex) {
+    HttpResult(Throwable ex) {
         this.msg = ex.getMessage();
         flag = Flag_Fail;
+    }
+
+    public static <T> HttpResult<T> success(T data){
+        return HttpResult.success(data);
+    }
+
+    public static HttpResult<String> success(){
+        return HttpResult.success();
+    }
+
+    public static HttpResult<String> fail(Throwable ex){
+        return HttpResult.fail(ex);
+    }
+
+    public static HttpResult<String> fail(String reason){
+        HttpResult<String> result = HttpResult.success();
+        result.setFlag(Flag_Fail);
+        result.setMsg(reason);
+        return result;
     }
 }

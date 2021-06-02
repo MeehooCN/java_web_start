@@ -81,7 +81,7 @@ public class DateUtil {
         return null;
     }
 
-    public static Date stringToDate(String string) throws Exception{
+    public static Date stringToDate(String string){
         if (StringUtil.stringIsNull(string)){
             return null;
         }

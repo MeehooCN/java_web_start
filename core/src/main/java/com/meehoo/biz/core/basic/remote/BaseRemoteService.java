@@ -23,7 +23,7 @@ import java.util.Map;
 @Slf4j
 @Qualifier("BaseRemoteService")
 public class BaseRemoteService {
-    @Value("${tdc.url}")
+//    @Value("${tdc.url}")
     protected String tdcURL;
     private final BaseGet baseGet;
     private final BasePost basePost;

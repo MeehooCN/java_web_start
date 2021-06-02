@@ -51,38 +51,28 @@ public class DictTypeController extends BaseController<DictType,DictTypeVO> {
     @ResponseBody
     public HttpResult<List<DataDictVO>> getByType(@RequestBody IdRO idRO){
         Map<String,Object> map = new HashMap<>();
-        try {
-            List<DataDict> dataDictList = dictTypeService.queryListByColumn(DataDict.class,"dType",idRO.getId());
-            List<DataDictVO> voList = VOUtil.convertDomainListToTempList(dataDictList,DataDictVO.class);
-            return new HttpResult<>(voList);
-        }catch (Exception e){
-            e.printStackTrace();
-            return new HttpResult<>(e);
-        }
+        List<DataDict> dataDictList = dictTypeService.queryListByColumn(DataDict.class,"dType",idRO.getId());
+        List<DataDictVO> voList = VOUtil.convertDomainListToTempList(dataDictList,DataDictVO.class);
+        return HttpResult.success(voList);
     }
 
     /**
      * 新增某个数据字典类型
      */
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public HttpResult create(@RequestBody DictTypeRO dictTypeRO) {
-        try {
-            DictType oldType = new DictType();
-            oldType.setId(null);
-            boolean hasNoNumber = !StringUtil.stringNotNull(dictTypeRO.getCode());
-            if (hasNoNumber) {
-                oldType.setCode(commonService.getBizObjectSerialNumber("DictType"));
-            }else {
-                oldType.setCode(dictTypeRO.getCode());
-            }
-            oldType.setName(dictTypeRO.getName());
-            oldType.setModule(dictTypeRO.getModule());
-            dictTypeService.save(oldType);
-            return new HttpResult();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new HttpResult(e);
+    public HttpResult create(@RequestBody DictTypeRO dictTypeRO) throws Exception{
+        DictType oldType = new DictType();
+        oldType.setId(null);
+        boolean hasNoNumber = !StringUtil.stringNotNull(dictTypeRO.getCode());
+        if (hasNoNumber) {
+            oldType.setCode(commonService.getBizObjectSerialNumber("DictType"));
+        }else {
+            oldType.setCode(dictTypeRO.getCode());
         }
+        oldType.setName(dictTypeRO.getName());
+        oldType.setModule(dictTypeRO.getModule());
+        dictTypeService.save(oldType);
+        return HttpResult.success();
     }
 
     /**
@@ -102,10 +92,10 @@ public class DictTypeController extends BaseController<DictType,DictTypeVO> {
             oldPM.setName(dictTypeRO.getName());
             oldPM.setModule(dictTypeRO.getModule());
             dictTypeService.update(oldPM);
-            return new HttpResult();
+            return HttpResult.success();
         } catch (Exception e) {
             e.printStackTrace();
-            return new HttpResult(e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -118,10 +108,10 @@ public class DictTypeController extends BaseController<DictType,DictTypeVO> {
     public HttpResult<List<DictTypeVO>>  getAllDictType(@RequestBody SearchConditionListRO searchConditionListRO) throws Exception {
         try {
             List<DictTypeVO> dictTypeVOList = dictTypeService.listAll(DictType.class,DictTypeVO.class,searchConditionListRO.getSearchConditionList());
-            return new HttpResult<>(dictTypeVOList);
+            return HttpResult.success(dictTypeVOList);
         } catch (Exception e) {
             e.printStackTrace();
-            return new HttpResult<>(e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

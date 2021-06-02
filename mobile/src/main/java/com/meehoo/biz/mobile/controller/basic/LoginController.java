@@ -32,28 +32,28 @@ public class LoginController {
     @PostMapping("login")
     public HttpResult<String> login(@RequestBody LoginRO ro) throws Exception{
         String token = loginRecordService.login(ro.getUsername(), ro.getPassword());
-        return new HttpResult<>(token);
+        return HttpResult.success(token);
     }
 
     @ApiOperation("退出")
     @PostMapping("exit")
     public HttpResult exit(@RequestBody TokenRO ro) throws Exception{
         loginRecordService.exit(ro.getToken());
-        return new HttpResult<>();
+        return HttpResult.success();
     }
 
 //    @ApiOperation("登录")
 //    @PostMapping("loginForUser")
 //    public HttpResult<UserVO> loginForUser(@RequestBody LoginRO ro) throws Exception{
 //        User user = loginRecordService.login1(ro.getUserName(), ro.getPwd());
-//        return new HttpResult<>(new UserVO(user));
+//        return HttpResult.success(new UserVO(user));
 //    }
 
     @ApiOperation("登录")
     @PostMapping("loginForUser")
     public HttpResult<String> loginForUser(String userName,String pwd) throws Exception{
         User user = loginRecordService.login1(userName, pwd);
-        return new HttpResult<>();
+        return HttpResult.success();
     }
 
 

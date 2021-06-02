@@ -62,14 +62,14 @@ public class UserController {
     public HttpResult<UserVO> getCurrentUser(@RequestBody TokenRO ro) throws Exception{
         User user = UserManager.getCurrentUser();
 
-        return new HttpResult<>(new UserVO(user));
+        return HttpResult.success(new UserVO(user));
     }
 
 
     @ApiOperation("查询人员,并按机构分类")
     @PostMapping("getListByOrg")
     public HttpResult<Map<String,List<OrganizationWithUserVO>>> getListByOrg() throws Exception {
-        return new HttpResult<>(userService.classifyByOrganization());
+        return HttpResult.success(userService.classifyByOrganization());
     }
 
     @RequestMapping(value = "getCurrLoginUser", method = RequestMethod.POST)
@@ -84,7 +84,7 @@ public class UserController {
 //        subOrgList.add(new OrganizationVO(organization));
 //        UserVO userVO = new UserVO(user);
 //        userVO.setOrganizationVOList(subOrgList);
-        return new HttpResult<>(userVO);
+        return HttpResult.success(userVO);
     }
 
     /**
@@ -96,7 +96,7 @@ public class UserController {
      */
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public HttpResult<String> create(@RequestBody UserRO userRO) throws Exception {
-        return new HttpResult<>(userService.createSaveUser(userRO));
+        return HttpResult.success(userService.createSaveUser(userRO));
     }
 
     /**
@@ -109,7 +109,7 @@ public class UserController {
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public HttpResult<String> update(@RequestBody UserRO userRO) throws Exception {
         String msg = userService.updateSaveUser(userRO);
-        return new HttpResult<>(msg);
+        return HttpResult.success(msg);
     }
 
     @RequestMapping(value = "saveOrgAndRole", method = RequestMethod.POST)
@@ -123,7 +123,7 @@ public class UserController {
         user.setRoleName(role.getName());
         userService.update(user);
 //        userService.saveOrganizationRoleLink(organizationRoleRO);
-        return new HttpResult();
+        return HttpResult.success();
     }
 
     /**
@@ -139,7 +139,7 @@ public class UserController {
             throw new RuntimeException("用户id不能为空");
         }
         UserVO userOrgList = userService.getUserOrgList(idRO.getId());
-        return new HttpResult<>(userOrgList);
+        return HttpResult.success(userOrgList);
     }
 
     /**
@@ -155,19 +155,19 @@ public class UserController {
             throw new RuntimeException("用户id不能为空");
         }
         List<UserOrganizationVO> userOrgAndRoleList = userService.getUserOrgAndRoleList(idRO.getId());
-        return new HttpResult<>(userOrgAndRoleList);
+        return HttpResult.success(userOrgAndRoleList);
     }
 
     @RequestMapping(value = "list", method = RequestMethod.POST)
     public HttpResult<PageResult<UserVO>> list(@RequestBody PageRO pagePO) throws Exception {
         PageResult<UserVO> userVOPageResult = userService.listPage(pagePO);
-        return new HttpResult<>(userVOPageResult);
+        return HttpResult.success(userVOPageResult);
     }
 
     @PostMapping("listAll")
     public HttpResult<List<UserVO>> listAll(@RequestBody SearchConditionListRO searchConditionListRO) throws Exception {
         List<UserVO> userVOS = userService.listAll(searchConditionListRO);
-        return new HttpResult<>(userVOS);
+        return HttpResult.success(userVOS);
     }
 
     @RequestMapping(value = "getById", method = RequestMethod.POST)
@@ -176,7 +176,7 @@ public class UserController {
            throw new RuntimeException("请选择要查询的用户");
         }
         UserVO userVO = userService.getById(idRO.getId());
-        return new HttpResult<>(userVO);
+        return HttpResult.success(userVO);
     }
 
     /**
@@ -189,7 +189,7 @@ public class UserController {
     @RequestMapping(value = "getUserHasRoleList", method = RequestMethod.POST)
     public HttpResult<List<RoleVO>> getUserHasRoleList(@RequestBody UserOrganizationRO userOrganizationRO) throws Exception {
         List<RoleVO> userHasRoleList = userService.getUserHasRoleList(userOrganizationRO.getUserId(), userOrganizationRO.getOrganizationId());
-        return new HttpResult<>(userHasRoleList);
+        return HttpResult.success(userHasRoleList);
     }
 
     /**
@@ -197,18 +197,13 @@ public class UserController {
      */
     @PostMapping("resetPassword")
     public HttpResult<String> resetPassword(@RequestBody IdRO idPO) throws Exception {
-        try {
-            User user = userService.queryById(User.class, idPO.getId());
-            if (BaseUtil.objectNotNull(user)) {
-                user.setPassword(MD5Encrypt.EncryptPassword("123456"));
-                userService.update(user);
-                return new HttpResult<>("操作成功，密码已被重置为123456");
-            } else {
-                throw new RuntimeException("未查询到当前用户");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new HttpResult<>(e);
+        User user = userService.queryById(User.class, idPO.getId());
+        if (BaseUtil.objectNotNull(user)) {
+            user.setPassword(MD5Encrypt.EncryptPassword("123456"));
+            userService.update(user);
+            return HttpResult.success("操作成功，密码已被重置为123456");
+        } else {
+            throw new RuntimeException("未查询到当前用户");
         }
     }
 
@@ -219,19 +214,14 @@ public class UserController {
      * @return
      */
     @PostMapping(value = "modifyPassword")
-    public HttpResult<String> modifyPassword(ModifyPasswordRO modifyPasswordRO) {
-        try {
-            User user = userService.queryById(User.class, modifyPasswordRO.getId());
-            if (MD5Encrypt.CheckEncryptPassword(modifyPasswordRO.getOldPw(), user.getPassword())) {
-                // 密码正确，修改密码
-                return judgeUser(user, modifyPasswordRO.getNewPw(), modifyPasswordRO.getConfirmNewPw());
-            }else{
-                // 密码错误，提示
-                throw new RuntimeException("原密码错误!");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new HttpResult<>(e);
+    public HttpResult<String> modifyPassword(ModifyPasswordRO modifyPasswordRO) throws Exception{
+        User user = userService.queryById(User.class, modifyPasswordRO.getId());
+        if (MD5Encrypt.CheckEncryptPassword(modifyPasswordRO.getOldPw(), user.getPassword())) {
+            // 密码正确，修改密码
+            return judgeUser(user, modifyPasswordRO.getNewPw(), modifyPasswordRO.getConfirmNewPw());
+        }else{
+            // 密码错误，提示
+            throw new RuntimeException("原密码错误!");
         }
     }
 
@@ -239,7 +229,7 @@ public class UserController {
         if(password.equals(confirmPassword)){
             user.setPassword(password);
             userService.update(user);
-            return new HttpResult<>("修改成功");
+            return HttpResult.success("修改成功");
         }else{
             throw new RuntimeException("两次密码必须一致");
         }
@@ -249,7 +239,7 @@ public class UserController {
         if(password.equals(confirmPassword)){
             admin.setPassword(MD5Encrypt.EncryptPassword(password));
             adminService.update(admin);
-            return new HttpResult<>("修改成功");
+            return HttpResult.success("修改成功");
         }else{
             throw new RuntimeException("两次密码必须一致");
         }
@@ -262,7 +252,7 @@ public class UserController {
 //        if (BaseUtil.stringNotNull(userName)) {
 //            User user = userService.getUserByName(userName);
 //            if (user == null) {
-//                return new HttpResult<>("用户名可用");
+//                return HttpResult.success("用户名可用");
 //            } else {
 //                throw new RuntimeException("用户名已被使用");
 //            }
@@ -278,7 +268,7 @@ public class UserController {
         if (userOrganizationList.size()>0)
             userService.batchDelete(userOrganizationList);
         userService.delete(idRO);
-        return new HttpResult();
+        return HttpResult.success();
     }
 
     @RequestMapping(value = "uploadIcon",method = RequestMethod.POST)
@@ -288,6 +278,6 @@ public class UserController {
         String url = FileUtil.uploadFile(fileUpload);
         employee.setHeadImgUrl(url);
         userService.update(employee);
-        return new HttpResult<>(url);
+        return HttpResult.success(url);
     }
 }

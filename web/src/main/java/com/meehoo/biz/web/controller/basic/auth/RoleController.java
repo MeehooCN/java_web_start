@@ -4,17 +4,18 @@ import com.meehoo.biz.common.util.BaseUtil;
 import com.meehoo.biz.common.util.StringUtil;
 import com.meehoo.biz.core.basic.domain.security.Role;
 import com.meehoo.biz.core.basic.param.HttpResult;
+import com.meehoo.biz.core.basic.param.PageCriteria;
+import com.meehoo.biz.core.basic.param.PageResult;
+import com.meehoo.biz.core.basic.param.SearchConditionBuilder;
 import com.meehoo.biz.core.basic.ro.security.RoleRO;
 import com.meehoo.biz.core.basic.service.common.ICommonService;
 import com.meehoo.biz.core.basic.service.security.IRoleService;
 import com.meehoo.biz.core.basic.vo.security.RoleVO;
 import com.meehoo.biz.web.controller.basic.common.BaseController;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -102,5 +103,22 @@ public class RoleController extends BaseController<Role,RoleVO> {
     public HttpResult<List<RoleVO>> listByType(Integer roleType) throws Exception {
         List<RoleVO> roleVOList = roleService.listByRoleType(roleType);
         return HttpResult.success(roleVOList);
+    }
+
+    @ApiOperation("列表查询")
+    @GetMapping("list")
+    public HttpResult<PageResult<RoleVO>> list(String name, PageCriteria pageCriteria) throws Exception{
+        SearchConditionBuilder builder = new SearchConditionBuilder()
+                .addLikeStart("name",name).addOrderDesc("createTime");
+        PageResult<RoleVO> roleVOPageResult = roleService.listPage(Role.class, RoleVO.class, pageCriteria, builder.toList());
+        return HttpResult.success(roleVOPageResult);
+    }
+
+    @ApiOperation("列表查询")
+    @GetMapping("listAll")
+    public HttpResult<List<RoleVO>> listAll() throws Exception{
+        SearchConditionBuilder builder = new SearchConditionBuilder().addOrderDesc("createTime");
+        List<RoleVO> roleVOPageResult = roleService.listAll(Role.class, RoleVO.class,  builder.toList());
+        return HttpResult.success(roleVOPageResult);
     }
 }

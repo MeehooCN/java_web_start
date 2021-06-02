@@ -57,4 +57,7 @@ ext.libraries = [
 
 		// 安全
 		"shiro":"org.apache.shiro:shiro-spring:1.4.0",
+
+		// 验证码
+		"kaptcha":"com.github.penggle:kaptcha:2.3.2"
 ]

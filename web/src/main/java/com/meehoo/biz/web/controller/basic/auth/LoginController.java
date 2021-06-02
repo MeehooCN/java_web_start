@@ -107,18 +107,18 @@ public class LoginController {
     @UnAop
     public HttpResult login(String username, String password, String code, HttpServletRequest request) {
         //校验验证码
-//        if (null != request.getSession()) {
-//            String loginValidateCode = request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY).toString();
-//            if (StrUtil.isEmpty(loginValidateCode)) {
-//                return new HttpResult("验证码已过期", HttpResult.Flag_Fail);
-//            } else if (StrUtil.isEmpty(code)) {
-//                return new HttpResult("验证码为空", HttpResult.Flag_Fail);
-//            } else if (!loginValidateCode.equals(code)) {
-//                return new HttpResult("验证码错误", HttpResult.Flag_Fail);
-//            }
-//        }else{
-//             return new HttpResult("验证码已过期", HttpResult.Flag_Fail);
-//        }
+        if (null != request.getSession()) {
+            String loginValidateCode = request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY).toString();
+            if (StringUtil.stringIsNull(loginValidateCode)) {
+                return HttpResult.fail("验证码已过期");
+            } else if (StringUtil.stringIsNull(code)) {
+                return HttpResult.fail("验证码为空");
+            } else if (!loginValidateCode.equals(code)) {
+                return HttpResult.fail("验证码错误");
+            }
+        }else{
+             return HttpResult.fail("验证码已过期");
+        }
 
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         Subject subject = SecurityUtils.getSubject();

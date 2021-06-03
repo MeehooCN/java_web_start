@@ -39,19 +39,19 @@ public final class HttpResult<T> implements Serializable{
     }
 
     public static <T> HttpResult<T> success(T data){
-        return HttpResult.success(data);
+        return new HttpResult<>(data);
     }
 
     public static HttpResult<String> success(){
-        return HttpResult.success();
+        return new HttpResult<>();
     }
 
     public static HttpResult<String> fail(Throwable ex){
-        return HttpResult.fail(ex);
+        return new HttpResult<>(ex);
     }
 
     public static HttpResult<String> fail(String reason){
-        HttpResult<String> result = HttpResult.success();
+        HttpResult<String> result = new HttpResult<>();
         result.setFlag(Flag_Fail);
         result.setMsg(reason);
         return result;

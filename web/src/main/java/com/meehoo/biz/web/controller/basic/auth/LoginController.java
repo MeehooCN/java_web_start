@@ -26,7 +26,9 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
@@ -41,6 +43,8 @@ import java.util.HashMap;
 @Slf4j
 public class LoginController {
     private final Producer captchaProducer;
+    @Value("${kaptcha.enable}")
+    private String enableKaptcha;
 
     @Autowired
     public LoginController(Producer captchaProducer) {
@@ -104,22 +108,19 @@ public class LoginController {
      */
     @PostMapping("/login")
     @ResponseBody
-    @UnAop
+//    @UnAop
     public HttpResult login(String username, String password, String code, HttpServletRequest request) {
         //校验验证码
-        if (null != request.getSession()) {
-            String loginValidateCode = request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY).toString();
-            if (StringUtil.stringIsNull(loginValidateCode)) {
-                return HttpResult.fail("验证码已过期");
-            } else if (StringUtil.stringIsNull(code)) {
-                return HttpResult.fail("验证码为空");
-            } else if (!loginValidateCode.equals(code)) {
-                return HttpResult.fail("验证码错误");
+        if (!"false".equals(enableKaptcha)){
+            Object attribute = request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
+            Assert.notNull(attribute,"验证码已过期");
+            String verificationCodeIn = String.valueOf(attribute);
+            request.getSession().removeAttribute(Constants.KAPTCHA_SESSION_KEY);
+            if (StringUtil.stringIsNull(verificationCodeIn) || !verificationCodeIn.equals(verificationCodeIn)) {
+                throw new RuntimeException("验证码不正确");
             }
-        }else{
-             return HttpResult.fail("验证码已过期");
         }
-
+        // 账号密码校验
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         Subject subject = SecurityUtils.getSubject();
         String msg = "";

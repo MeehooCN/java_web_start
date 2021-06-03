@@ -4,7 +4,9 @@ package com.meehoo.biz.web.config.shiro;
  * @author zc
  * @date 2020-04-16
  */
+import com.meehoo.biz.core.basic.domain.security.Admin;
 import com.meehoo.biz.core.basic.domain.security.User;
+import com.meehoo.biz.core.basic.service.security.IAdminService;
 import com.meehoo.biz.core.basic.service.security.IUserService;
 import com.meehoo.biz.core.basic.service.security.IUserToPermissionService;
 import com.meehoo.biz.core.basic.vo.security.ApiPermissionVO;
@@ -26,7 +28,7 @@ public class AuthRealm extends AuthorizingRealm {
 
 //    @Resource
     @Autowired
-    private IUserService userService;
+    private IAdminService adminService;
 
     @Autowired
     private IUserToPermissionService userToPermissionService;
@@ -71,9 +73,9 @@ public class AuthRealm extends AuthorizingRealm {
         }
 
         log.info("credentials:" + token.getCredentials());
-        User userInfo = null;
+        Admin userInfo = null;
         try {
-            userInfo = userService.getUserByName(username);
+            userInfo = adminService.queryByUserName(username);
         } catch (Exception e) {
             e.printStackTrace();
         }

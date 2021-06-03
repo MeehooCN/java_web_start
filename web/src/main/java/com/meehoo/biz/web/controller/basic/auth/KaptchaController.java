@@ -1,5 +1,6 @@
 package com.meehoo.biz.web.controller.basic.auth;
 
+import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.meehoo.biz.common.util.StringUtil;
 import com.meehoo.biz.core.basic.param.HttpResult;
@@ -35,7 +36,7 @@ public class KaptchaController {
         try {
             // 生产验证码字符串并保存到session中
             String createText = defaultKaptcha.createText();
-            httpServletRequest.getSession().setAttribute("verificationCode", createText);
+            httpServletRequest.getSession().setAttribute(Constants.KAPTCHA_SESSION_KEY, createText);
             // 使用生成的验证码字符串返回一个BufferedImage对象并转为byte写入到byte数组中
             BufferedImage challenge = defaultKaptcha.createImage(createText);
             ImageIO.write(challenge, "jpg", jpegOutputStream);

@@ -47,10 +47,11 @@ public class ControllerMethodInvokedHandler {
     }
 
 
-    //    @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping) || " +
-//            "@annotation(org.springframework.web.bind.annotation.PostMapping) || " +
-//            "@annotation(org.springframework.web.bind.annotation.GetMapping) ")
-    @Pointcut("@annotation(io.swagger.annotations.ApiOperation)")
+        @Pointcut(
+//                "@annotation(org.springframework.web.bind.annotation.RequestMapping) || " +
+            "@annotation(org.springframework.web.bind.annotation.PostMapping) || " +
+            "@annotation(org.springframework.web.bind.annotation.GetMapping) ")
+//    @Pointcut("@annotation(io.swagger.annotations.ApiOperation)")
     public void pointCut() {
     }
 

@@ -43,7 +43,7 @@ public class OrganizationTreeVO {
 
     private List<OrganizationTreeVO> children;
 
-    public OrganizationTreeVO(Organization organization) throws Exception {
+    public OrganizationTreeVO(Organization organization){
         this.label = organization.getName();
         this.key = organization.getCode();
         this.value = organization.getId();

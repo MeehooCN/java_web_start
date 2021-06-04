@@ -42,15 +42,13 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
     private final IAdminService adminService;
     private final IAuthMenuService authMenuService;
     private final IOrganizationService organizationService;
-//    private final String context_path;
-
 
     @ApiOperation("管理员列表条件查询")
     @GetMapping("list")
     public HttpResult<PageResult<AdminVO>> listAdmin(AdminSearchRO ro){
         SearchConditionBuilder builder = new SearchConditionBuilder()
                 .addLikeStart("organizationCode",ro.getOrganizationCode())
-                .addLikeStart("username",ro.getUserName()).addLikeAny("name",ro.getName());
+                .addLikeStart("userName",ro.getUserName()).addLikeAny("name",ro.getName());
         return pageWithDisable(builder.toList(),ro.toPageCriteria());
     }
 
@@ -100,44 +98,36 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
     @ResponseBody
     @Override
     public HttpResult<String> create(@RequestBody AdminRO ro) throws Exception{
-        if(BaseUtil.objectNotNull(adminService.queryByUserName(ro.getUsername()))){
+        if(BaseUtil.objectNotNull(adminService.queryByUserName(ro.getUserName()))){
             throw new RuntimeException("用户名已存在");
         }
-        ro.setPassword(MD5Encrypt.EncryptPassword("123456"));
-        HttpResult<String> stringHttpResult = super.create(ro);
-//        Admin admin = new Admin();
-//        admin.setUsername(vo.getUsername())
-//                .setHeadPic(vo.getHeadPic())
-//                .setRoleId(vo.getRoleId())
-//                .setRoleName(vo.getRoleName())
-//                .setPassword(MD5Encrypt.EncryptPassword("123456"))
-//                .setCreateTime(new Date());
-//        adminService.save(admin);
-        return stringHttpResult;
+        if (StringUtil.stringIsNull(ro.getId()))
+            ro.setPassword(MD5Encrypt.EncryptPassword("123456"));
+        return super.create(ro);
     }
 
-    /**
-     * 编辑管理员
-     * @param ro
-     * @return
-     * @throws Exception
-     */
-    @PostMapping("update")
-    @ResponseBody
-    @Override
-    public HttpResult update(@RequestBody AdminRO ro) throws Exception{
-        Admin admin = adminService.queryById(Admin.class,ro.getId());
-        Admin ifExist = adminService.queryByUserName(ro.getUsername());
-        if(BaseUtil.objectNotNull(ifExist) && !admin.getId().equals(ifExist.getId())){
-            throw new RuntimeException("未找到id");
-        }
-        super.update(ro);
-//        admin.setUsername(vo.getUsername())
-//                .setHeadPic(vo.getHeadPic())
-//                .setUpdateTime(new Date());
-//        adminService.update(admin);
-        return HttpResult.success();
-    }
+//    /**
+//     * 编辑管理员
+//     * @param ro
+//     * @return
+//     * @throws Exception
+//     */
+//    @PostMapping("update")
+//    @ResponseBody
+//    @Override
+//    public HttpResult update(@RequestBody AdminRO ro) throws Exception{
+//        Admin admin = adminService.queryById(Admin.class,ro.getId());
+//        Admin ifExist = adminService.queryByUserName(ro.getUserName());
+//        if(BaseUtil.objectNotNull(ifExist) && !admin.getId().equals(ifExist.getId())){
+//            throw new RuntimeException("未找到id");
+//        }
+//        super.update(ro);
+////        admin.setUsername(vo.getUsername())
+////                .setHeadPic(vo.getHeadPic())
+////                .setUpdateTime(new Date());
+////        adminService.update(admin);
+//        return HttpResult.success();
+//    }
 
     @PostMapping("getCurrLoginAdmin")
     public HttpResult<AdminVO> getCurrLoginAdmin() throws Exception {

@@ -13,10 +13,10 @@ public interface IAdminDao extends JpaRepository<Admin, String> {
 	/**
 	 * 登录时查询信息
 	 * 通过username登录
-	 * @param username
+	 * @param userName
 	 * @return
 	 */
-	@Query("FROM Admin t WHERE t.username = ?1 ")
-	List<Admin> queryByUserName(String username);
+	@Query("FROM Admin t WHERE t.userName = ?1 ")
+	List<Admin> queryByUserName(String userName);
 
 }

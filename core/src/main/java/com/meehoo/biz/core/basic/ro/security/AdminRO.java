@@ -1,21 +1,22 @@
 package com.meehoo.biz.core.basic.ro.security;
 
 import com.meehoo.biz.core.basic.ro.IdRO;
+import com.meehoo.biz.core.basic.ro.TimeEntityRO;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author zc
  * @date 2019-04-26
  */
-@Data
-public class AdminRO extends IdRO{
-
-    private String id;
-
+@Setter
+@Getter
+public class AdminRO extends TimeEntityRO {
     /**
      * 登录名
      */
-    private String username;
+    private String userName;
 
     private String password;
 

@@ -27,7 +27,7 @@ public class Admin extends TimeEntity {
      * 登录名
      */
     @Column(nullable = false, length = 50, unique = true)
-    private String username;
+    private String userName;
 
     @Column(nullable = false, length = 50)
     private String password;

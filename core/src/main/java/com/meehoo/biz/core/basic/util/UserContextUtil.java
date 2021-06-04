@@ -49,7 +49,7 @@ public class UserContextUtil {
                         Admin admin = (Admin) obj;
                         User re = new User();
                         re.setId(admin.getId());
-                        re.setName(admin.getUsername());
+                        re.setName(admin.getUserName());
                         return re;
                     } else {
                         return null;

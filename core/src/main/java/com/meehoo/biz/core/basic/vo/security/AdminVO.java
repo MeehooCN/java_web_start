@@ -2,6 +2,7 @@ package com.meehoo.biz.core.basic.vo.security;
 
 import com.meehoo.biz.core.basic.domain.security.Admin;
 import com.meehoo.biz.core.basic.vo.IdEntityVO;
+import com.meehoo.biz.core.basic.vo.TimeEntityVO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,16 +14,13 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class AdminVO extends IdEntityVO{
+public class AdminVO extends TimeEntityVO {
 
     private String token;
-    private String id;
 
-    private String username;
+    private String userName;
 
     private String headPic;
-
-    private Date createTime;
 
     private String roleId;
 
@@ -37,10 +35,9 @@ public class AdminVO extends IdEntityVO{
     private List<OrganizationVO> organizationVOS;
 
     public AdminVO(Admin admin){
-        this.id = admin.getId();
-        this.username = admin.getUsername();
+        super(admin);
+        this.userName = admin.getUserName();
         this.headPic = admin.getHeadPic();
-        this.createTime = admin.getCreateTime();
         roleId = admin.getRoleId();
         roleName = admin.getRoleName();
         this.organizationId = admin.getOrganizationId();

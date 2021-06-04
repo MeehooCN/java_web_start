@@ -22,7 +22,7 @@ public class AdminToRoleVO extends BaseEntityVO {
 
     public AdminToRoleVO(AdminToRole adminToRole) {
         this.adminId = adminToRole.getAdmin().getId();
-        this.adminName = adminToRole.getAdmin().getUsername();
+        this.adminName = adminToRole.getAdmin().getUserName();
         this.roleId = adminToRole.getRole().getId();
         this.roleName = adminToRole.getRole().getName();
     }

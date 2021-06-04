@@ -3,10 +3,12 @@ package com.meehoo.biz.web.handler;
 import com.meehoo.biz.common.util.DateUtil;
 import com.meehoo.biz.core.basic.annotation.HasPermission;
 import com.meehoo.biz.core.basic.annotation.OutputApi;
+import com.meehoo.biz.core.basic.annotation.UnAop;
 import com.meehoo.biz.core.basic.domain.security.UserLoginRecord;
 import com.meehoo.biz.core.basic.exception.NoPermissionException;
 import com.meehoo.biz.core.basic.exception.NotLoginException;
 import com.meehoo.biz.core.basic.exception.TokenInvalidException;
+import com.meehoo.biz.core.basic.handler.UserManager;
 import com.meehoo.biz.core.basic.param.HttpResult;
 import com.meehoo.biz.core.basic.service.security.ILoginRecordService;
 import com.meehoo.biz.core.basic.service.security.IUserToPermissionService;
@@ -83,7 +85,7 @@ public class ControllerMethodInvokedHandler {
     }
 
     private void beforeHandle(ProceedingJoinPoint joinPoint)throws Exception {
-//        if (!getAnnotation(joinPoint, UnAop.class)&&UserContextUtil.getUser()==null){
+//        if (!getAnnotation(joinPoint, UnAop.class)&&UserManager.getCurrent()==null){
 //            throw new NotLoginException();
 //        }
         if (getAnnotation(joinPoint, OutputApi.class)){

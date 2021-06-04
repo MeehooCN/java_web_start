@@ -55,6 +55,7 @@ public class LoginController {
      * 获取验证码
      */
     @GetMapping(value = "getKaptchaImage")
+    @UnAop
     public void getKaptchaImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setDateHeader("Expires", 0);
         // Set standard HTTP/1.1 no-cache headers.
@@ -102,26 +103,26 @@ public class LoginController {
     /**
      * 登录
      *
-     * @param username
+     * @param userName
      * @param password
      * @return
      */
     @PostMapping("/login")
     @ResponseBody
-//    @UnAop
-    public HttpResult login(String username, String password, String code, HttpServletRequest request) {
+    @UnAop
+    public HttpResult login(String userName, String password, String code, HttpServletRequest request) {
         //校验验证码
         if (!"false".equals(enableKaptcha)){
             Object attribute = request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
             Assert.notNull(attribute,"验证码已过期");
             String verificationCodeIn = String.valueOf(attribute);
             request.getSession().removeAttribute(Constants.KAPTCHA_SESSION_KEY);
-            if (StringUtil.stringIsNull(verificationCodeIn) || !verificationCodeIn.equals(verificationCodeIn)) {
+            if (StringUtil.stringIsNull(verificationCodeIn) || !verificationCodeIn.equals(code)) {
                 throw new RuntimeException("验证码不正确");
             }
         }
         // 账号密码校验
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+        UsernamePasswordToken token = new UsernamePasswordToken(userName, password);
         Subject subject = SecurityUtils.getSubject();
         String msg = "";
         try {

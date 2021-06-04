@@ -13,10 +13,7 @@ import com.meehoo.biz.core.basic.util.UserContextUtil;
 import com.meehoo.biz.core.basic.vo.security.AuthMenuTreeVO;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
@@ -45,7 +42,7 @@ public class AuthRoleController {
      * @return
      */
     //@PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping(value = "getMenuListByRoleId", method = RequestMethod.POST)
+    @PostMapping("getMenuListByRoleId")
     public HttpResult<AuthMenuTreeVO> getMenuListByRoleId(@RequestBody AuthMenuRO authMenuPO) throws Exception {
         AuthMenuTreeVO authMenuTreeVO = authMenuService.getMenuListByRoleId(authMenuPO.getRoleId());
         return HttpResult.success(authMenuTreeVO);
@@ -58,7 +55,7 @@ public class AuthRoleController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "batchSaveAuthMenuInfo", method = RequestMethod.POST)
+    @PostMapping("batchSaveAuthMenuInfo")
     public HttpResult<String> batchSaveAuthInfo(@RequestBody AuthRoleMenuRO authRoleMenuRO) throws Exception {
         authMenuService.saveOrUpdateAuthMenu(authRoleMenuRO);
         return HttpResult.success("授权成功");
@@ -69,9 +66,8 @@ public class AuthRoleController {
      *
      * @return
      */
-    @RequestMapping(value = "getUserHasMenuList", method = RequestMethod.POST)
+    @PostMapping("getUserHasMenuList")
     public HttpResult<AuthMenuTreeVO> getRoleHasMenuList(@RequestBody AuthenticationRO authenticationRO) throws Exception{
-        HashMap<String, Object> map = new HashMap<>(2);
         User user = UserContextUtil.getUser();
         if (BaseUtil.objectNotNull(user)) {
             UserContextInfo userContextInfo = user.getUserContextInfo();

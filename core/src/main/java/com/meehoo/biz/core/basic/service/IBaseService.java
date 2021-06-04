@@ -24,7 +24,7 @@ public interface IBaseService {
     }
 
     // 删
-    <T> void deleteById(Class<T> entityClass, Object primaryKey) throws Exception;
+    <T> void deleteById(Class<T> entityClass, Object primaryKey);
     void delete(Object object) throws Exception;
     <T> void batchDelete(List<T> objects) throws Exception;
 

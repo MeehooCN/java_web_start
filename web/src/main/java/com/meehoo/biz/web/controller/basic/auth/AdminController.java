@@ -47,11 +47,11 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
 
     @ApiOperation("管理员列表条件查询")
     @GetMapping("list")
-    public HttpResult<PageResult<AdminVO>> listAdmin(AdminSearchRO ro) throws Exception {
+    public HttpResult<PageResult<AdminVO>> listAdmin(AdminSearchRO ro){
         SearchConditionBuilder builder = new SearchConditionBuilder()
                 .addLikeStart("organizationCode",ro.getOrganizationCode())
                 .addLikeStart("username",ro.getUserName()).addLikeAny("name",ro.getName());
-        return page(builder.toList(),ro.toPageCriteria());
+        return pageWithDisable(builder.toList(),ro.toPageCriteria());
     }
 
     @ApiOperation("重置密码")

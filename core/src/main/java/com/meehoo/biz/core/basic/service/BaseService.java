@@ -67,17 +67,17 @@ public class BaseService implements IBaseService {
      */
     @Override
     @Transactional
-    public <T> void deleteById(Class<T> entityClass, Object primaryKey) throws Exception {
+    public <T> void deleteById(Class<T> entityClass, Object primaryKey){
         baseDao.deleteById(entityClass, primaryKey);
     }
     @Override
     @Transactional
-    public void delete(Object object) throws Exception {
+    public void delete(Object object){
         baseDao.delete(object);
     }
     @Override
     @Transactional
-    public <T> void batchDelete(List<T> objects) throws Exception {
+    public <T> void batchDelete(List<T> objects){
         if (BaseUtil.collectionNotNull(objects)) {
             Class<T> clazz = (Class<T>) objects.get(0).getClass();
             Method getId = ReflectUtil.findMethod(clazz, "getId");

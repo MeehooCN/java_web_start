@@ -150,23 +150,6 @@ public class OrganizationServiceImpl extends BaseService implements IOrganizatio
     }
 
     @Override
-    public List<OrganizationTreeVO> getSubOrgListTree(String parentOrgCode) throws Exception {
-        List<Organization> topOrgList = new ArrayList<>();
-
-        List<Organization> orgList = getAllSubOrg(parentOrgCode);
-
-        for (Organization org : orgList) {
-            Organization parentOrg = org.getParentOrg();
-            if (parentOrg == null||parentOrgCode.equals(org.getCode())) {
-                topOrgList.add(org);
-            } else
-                parentOrg.getSubOrgList().add(org);
-        }
-
-        return VOUtil.convertDomainListToTempList(topOrgList, OrganizationTreeVO.class);
-    }
-
-    @Override
     public List<OrganizationVO> queryByUserId(String userId){
         List<String> orgIdList = allSubOrgIdListByUserId(userId);
         orgIdList.add(userOrganizationDao.findByUserId(userId).get(0).getOrganization().getId());
@@ -202,25 +185,6 @@ public class OrganizationServiceImpl extends BaseService implements IOrganizatio
         return organizationDao.queryById(orgId);
     }
 
-
-
-    @Override
-    public List<String> allSubOrgIdList(String parentOrgId) {
-        if (StringUtil.stringNotNull(parentOrgId)) {
-            final String sql = "select t3.id from(" +
-                    " select t1.id," +
-                    " if(FIND_IN_SET(parentOrg_id,@pids)>0,@pids\\:=concat(@pids,',',id),0)as isChild" +
-                    " from(" +
-                    "(select id,parentOrg_id from sec_org order by grade)t1," +
-                    "(select @pids\\:=?1)t2)" +
-                    ")t3" +
-                    " where t3.isChild !=0";
-
-            return baseDao.queryBySQL(sql, parentOrgId);
-        }
-        return Collections.emptyList();
-    }
-
     @Override
     public List<String> allSubOrgIdListByUserId(String userId) {
         if (StringUtil.stringNotNull(userId)) {
@@ -241,12 +205,6 @@ public class OrganizationServiceImpl extends BaseService implements IOrganizatio
     @Override
     public List<Organization> listRoot() {
         return organizationDao.listRoot();
-    }
-
-
-    @Override
-    public List<Organization> getAllOrganization(){
-        return organizationDao.findAll();
     }
 
     @Override

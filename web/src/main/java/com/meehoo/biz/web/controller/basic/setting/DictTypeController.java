@@ -110,4 +110,9 @@ public class DictTypeController extends BaseController<DictType,DictTypeVO> {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+    @Override
+    public HttpResult<Boolean> delete(String id){
+        return confirmDelete(id);
+    }
 }

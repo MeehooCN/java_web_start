@@ -84,5 +84,6 @@ public class Organization extends AddressEntity {
     @Column(length = 20)
     private String contactPhone; // 联系电话
 
+    @Column
     private String description;
 }

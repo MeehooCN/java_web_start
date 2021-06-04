@@ -72,7 +72,6 @@ public class DictValueController extends BaseController<DictValue,DictValueVO> {
      */
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public HttpResult update(@RequestBody DictValueRO dictValueRO) throws Exception{
-        Map<String, Object> returnMap = new HashMap<>();
         if(!StringUtil.stringNotNull(dictValueRO.getId())){
             throw new RuntimeException("未查询到当前对象");
         }
@@ -126,5 +125,10 @@ public class DictValueController extends BaseController<DictValue,DictValueVO> {
     public HttpResult<PageResult<DictValueVO>>   pageByTypeId(PageCriteria pageCriteria, String typeId){
         SearchConditionBuilder builder = new SearchConditionBuilder().addEq("dictType.id",typeId);
         return page(builder.toList(),pageCriteria);
+    }
+
+    @Override
+    public HttpResult<Boolean> delete(String id){
+        return confirmDelete(id);
     }
 }

@@ -1,8 +1,11 @@
 package com.meehoo.biz.core.basic.domain.setting;
 
 import com.meehoo.biz.core.basic.domain.IdEntity;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,6 +22,8 @@ import javax.persistence.Table;
 @Table(name = "sys_dict_value")
 @DynamicInsert
 @DynamicUpdate
+@Setter
+@Getter
 public class DictValue extends IdEntity {
 
     //是系统预设
@@ -56,43 +61,4 @@ public class DictValue extends IdEntity {
     @Column
     private int isSysSet = ISSYSSET_NO;
 
-//    public String getId() {
-//        return id;
-//    }
-//
-//    public void setId(String id) {
-//        this.id = id;
-//    }
-
-    public String getMkey() {
-        return mkey;
-    }
-
-    public void setMkey(String mkey) {
-        this.mkey = mkey;
-    }
-
-    public String getMvalue() {
-        return mvalue;
-    }
-
-    public void setMvalue(String mvalue) {
-        this.mvalue = mvalue;
-    }
-
-    public DictType getDictType() {
-        return dictType;
-    }
-
-    public void setDictType(DictType dictType) {
-        this.dictType = dictType;
-    }
-
-    public int getIsSysSet() {
-        return isSysSet;
-    }
-
-    public void setIsSysSet(int isSysSet) {
-        this.isSysSet = isSysSet;
-    }
 }

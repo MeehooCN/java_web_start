@@ -149,8 +149,8 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
     }
 
     @ApiOperation("基础__更新status状态")
-    @PostMapping("changeStatus")
-    public HttpResult changeStatus(@RequestBody ChangeStatusRO ro) throws Exception {
+    @PostMapping("changeEnable")
+    public HttpResult changeEnable(@RequestBody ChangeStatusRO ro) throws Exception {
         D domain = this.baseService.queryById(clazzD, ro.getId());
         if (BaseEntity.class.isAssignableFrom(clazzD)) {
             ((BaseEntity)domain).setEnable(ro.getEnable());

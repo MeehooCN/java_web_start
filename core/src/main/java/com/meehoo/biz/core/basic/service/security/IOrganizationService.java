@@ -24,8 +24,6 @@ public interface IOrganizationService extends IBaseService {
 
     List<Organization> getAllSubOrg(String parentOrgCode) throws Exception;
 
-    List<OrganizationTreeVO> getSubOrgListTree(String parentOrgCode) throws Exception;
-
     List<OrganizationVO> queryByUserId(String userId) throws Exception;
 
     List<OrganizationVO> listOrgAndSubOrg(String orgId) throws Exception;
@@ -35,13 +33,6 @@ public interface IOrganizationService extends IBaseService {
     Organization queryById(String orgId) throws Exception;
 
     /**
-     * 获取父机构下所有子孙机构的Id
-     * @param parentOrgId
-     * @return
-     */
-    List<String> allSubOrgIdList(String parentOrgId);
-
-    /**
      * 获取当前用户机构下子孙机构的id
      * @param userId
      * @return
@@ -49,8 +40,6 @@ public interface IOrganizationService extends IBaseService {
     List<String> allSubOrgIdListByUserId(String userId);
 
     List<Organization> listRoot();
-
-    List<Organization> getAllOrganization()throws Exception;
 
     OrganizationTreeTotalVO getAllOrganizationWithEnable() throws Exception;
 }

@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 public class PageRO{
-    private String status;
+//    private String status;
 
     private int rows;  //每页数量
 

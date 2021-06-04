@@ -150,7 +150,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
 
     @ApiOperation("基础__更新status状态")
     @PostMapping("changeStatus")
-    public HttpResult delete(@RequestBody ChangeStatusRO ro) throws Exception {
+    public HttpResult changeStatus(@RequestBody ChangeStatusRO ro) throws Exception {
         D domain = this.baseService.queryById(clazzD, ro.getId());
         if (BaseEntity.class.isAssignableFrom(clazzD)) {
             ((BaseEntity)domain).setEnable(ro.getEnable());
@@ -163,7 +163,7 @@ public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
 
     @ApiOperation("假删除")
     @PostMapping(value = "delete")
-    public HttpResult<Boolean> changeStatus(String id) throws Exception {
+    public HttpResult<Boolean> delete(String id) throws Exception {
         D domain = this.baseService.queryById(clazzD, id);
         if (BaseEntity.class.isAssignableFrom(clazzD)) {
             BaseEntity baseEntity = (BaseEntity) domain;

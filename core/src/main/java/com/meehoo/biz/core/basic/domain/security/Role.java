@@ -2,6 +2,7 @@ package com.meehoo.biz.core.basic.domain.security;
 
 import com.meehoo.biz.core.basic.annotation.SetBySystem;
 import com.meehoo.biz.core.basic.domain.IdEntity;
+import com.meehoo.biz.core.basic.domain.TimeEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,7 +25,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class Role extends IdEntity {
+public class Role extends TimeEntity {
 
     public static final int STATUS_FORBID = 0;
 
@@ -37,18 +38,6 @@ public class Role extends IdEntity {
     public static final int SYSTEMDEFAUFT_NO = 0;
 
     public static final int SYSTEMDEFAUFT_YES = 1;
-    /**
-     * 编号
-     */
-    @Column(nullable = false,columnDefinition = "int default 0")
-    private int code;
-
-    /**
-     * 角色名
-     */
-    @Column(nullable = false, length = 80)
-    private String name;
-
     /**
      * 备注
      */
@@ -67,20 +56,6 @@ public class Role extends IdEntity {
     @Column
     private int systemDefault = STATUS_ENABLE;
 
-
-    /**
-     * 创建时间
-     */
-    @Column
-    @SetBySystem(createOnly = true)
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    @Column
-    @SetBySystem(updateOnly = true)
-    private Date updateTime;
 
     /**
      * 用户类型

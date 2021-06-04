@@ -1,6 +1,7 @@
 package com.meehoo.biz.core.basic.vo.security;
 
 import com.meehoo.biz.common.util.BaseUtil;
+import com.meehoo.biz.common.util.StringUtil;
 import com.meehoo.biz.core.basic.domain.security.Organization;
 import com.meehoo.biz.core.basic.util.VOUtil;
 import lombok.Getter;
@@ -49,10 +50,10 @@ public class OrganizationTreeVO {
         this.address = organization.getAddress();
         this.proOrgType = organization.getProOrgType();
         StringBuilder sb = new StringBuilder();
-        sb.append(organization.getProvince())
-                .append(sb.toString().equals(organization.getCity()) ? "" : organization.getCity())
-                .append(organization.getArea())
-                .append(organization.getAddress());
+        sb.append(StringUtil.getNonnullString(organization.getProvince()))
+                .append(StringUtil.getNonnullString(organization.getCity()))
+                .append(StringUtil.getNonnullString(organization.getArea()))
+                .append(StringUtil.getNonnullString(organization.getAddress()));
         this.detailAddress = sb.toString();
         if (organization.getParentOrg()!=null){
             this.parentOrgId = organization.getParentOrg().getId();

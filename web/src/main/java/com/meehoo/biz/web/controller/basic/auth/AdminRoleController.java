@@ -10,6 +10,7 @@ import com.meehoo.biz.core.basic.vo.security.AdminToRoleVO;
 import com.meehoo.biz.web.controller.basic.common.BaseControllerPlus;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,14 +28,9 @@ import java.util.List;
 @Api(description = "管理员的权限")
 @RestController
 @RequestMapping("adminToRole")
+@AllArgsConstructor
 public class AdminRoleController extends BaseControllerPlus<AdminToRole,AdminToRoleVO,AdminToRoleRO> {
     private final IAdminService adminService;
-
-    @Autowired
-    public AdminRoleController(IAdminService adminService) {
-        super(adminService);
-        this.adminService = adminService;
-    }
 
     @ApiOperation("管理员设置权限")
     @PostMapping("adminRole")

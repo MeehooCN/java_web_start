@@ -36,11 +36,14 @@ public class BaseEntity extends IdEntity {
     protected String name;
 
     /**
-     * 状态
+     * 是否删除
      */
-//    @Column(columnDefinition = "int default 1")
-//    protected Integer status ;
-
     @Column(columnDefinition = "int default 0")
     protected int isDelete;
+
+    /**
+     * 启用/禁用
+     */
+    @Column(columnDefinition = "int default 1")
+    protected int enable;
 }

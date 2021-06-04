@@ -158,11 +158,11 @@ public class UserController {
         return HttpResult.success(userOrgAndRoleList);
     }
 
-    @RequestMapping(value = "list", method = RequestMethod.POST)
-    public HttpResult<PageResult<UserVO>> list(@RequestBody PageRO pagePO) throws Exception {
-        PageResult<UserVO> userVOPageResult = userService.listPage(pagePO);
-        return HttpResult.success(userVOPageResult);
-    }
+//    @RequestMapping(value = "list", method = RequestMethod.POST)
+//    public HttpResult<PageResult<UserVO>> list(@RequestBody PageRO pagePO) throws Exception {
+//        PageResult<UserVO> userVOPageResult = userService.listPage(pagePO);
+//        return HttpResult.success(userVOPageResult);
+//    }
 
     @PostMapping("listAll")
     public HttpResult<List<UserVO>> listAll(@RequestBody SearchConditionListRO searchConditionListRO) throws Exception {

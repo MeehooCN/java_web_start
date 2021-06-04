@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.meehoo.biz.common.util.BaseUtil;
 import com.meehoo.biz.core.basic.domain.bos.Menu;
 import com.meehoo.biz.core.basic.util.VOUtil;
+import com.meehoo.biz.core.basic.vo.IdEntityVO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,9 +22,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class MenuVO {
-
-    private String id;
+public class MenuVO extends IdEntityVO {
 
     private String code;
 
@@ -62,7 +61,7 @@ public class MenuVO {
     private Integer menuType;
 
     public MenuVO(Menu menu) throws Exception {
-        this.id = menu.getId();
+        super(menu);
         this.code = menu.getCode();
         this.name = menu.getName();
         this.icon = menu.getIcon();

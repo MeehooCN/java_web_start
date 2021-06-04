@@ -11,7 +11,7 @@ public class BaseUtil {
      @ApiOperation("")
      @GetMapping("")
      public HttpResult statistic(){
-     return new HttpResult();
+     return HttpResult.success();
      }
      */
 
@@ -20,7 +20,7 @@ public class BaseUtil {
      @ApiOperation("")
      @PostMapping("")
      public HttpResult statistic(){
-     return new HttpResult();
+     return HttpResult.success();
      }
      */
 

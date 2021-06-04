@@ -10,13 +10,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ChangeStatusRO extends IdRO {
-    private int status;
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
+    private int enable;
 }

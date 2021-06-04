@@ -1,9 +1,9 @@
 package com.meehoo.biz.mobile.controller.basic;
 
 import com.meehoo.biz.common.util.BaseUtil;
-import com.meehoo.biz.core.basic.param.HttpResult;
-import com.meehoo.biz.core.basic.param.PageCriteria;
-import com.meehoo.biz.core.basic.param.PageResult;
+import com.meehoo.biz.core.basic.domain.BaseEntity;
+import com.meehoo.biz.core.basic.domain.IdEntity;
+import com.meehoo.biz.core.basic.param.*;
 import com.meehoo.biz.core.basic.ro.IdRO;
 import com.meehoo.biz.core.basic.ro.bos.ChangeStatusRO;
 import com.meehoo.biz.core.basic.ro.bos.PageRO;
@@ -11,28 +11,28 @@ import com.meehoo.biz.core.basic.ro.bos.SearchConditionListRO;
 import com.meehoo.biz.core.basic.ro.security.AuthenticationRO;
 import com.meehoo.biz.core.basic.service.IBaseService;
 import com.meehoo.biz.core.basic.service.common.ICommonService;
+import com.meehoo.biz.core.basic.vo.IdEntityVO;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Administrator on 2017/10/31.
  */
-public abstract class BaseController<D, V> {
+public abstract class BaseController<D extends IdEntity, V extends IdEntityVO> {
 
     @Autowired
-    private IBaseService baseService;
+    @Qualifier("baseServicePlus")
+    protected IBaseService baseService;
 
     @Autowired
-    private ICommonService commonService;
+    protected ICommonService commonService;
 
     protected Class<D> clazzD;
 
@@ -50,106 +50,132 @@ public abstract class BaseController<D, V> {
         }
     }
 
-    /**
-     * 分页显示域模型信息
-     *
-     * @param pageRO
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "list", method = RequestMethod.POST)
-    public HttpResult<PageResult<V>> list(@RequestBody PageRO pageRO) throws Exception {
-        PageCriteria pageCriteria = new PageCriteria(pageRO.getPage(), pageRO.getRows());
-        PageResult<V> roleVOPageResult = baseService.listPage(clazzD, clazzV, pageCriteria, pageRO.getSearchConditionList());
-        return HttpResult.success(roleVOPageResult);
+    private Set<String> domainFields;
+
+    private boolean containField(Field field){
+        if (domainFields==null){
+            synchronized (this){
+                if (domainFields==null){
+                    Field[] fields = clazzD.getDeclaredFields();
+                    domainFields = new HashSet<>(fields.length+3);
+                    for (Field f : fields) {
+                        domainFields.add(f.getName());
+                    }
+                    if (clazzD.isAssignableFrom(BaseEntity.class)){
+                        domainFields.add("code");
+                        domainFields.add("name");
+                        domainFields.add("isDelete");
+                    }
+                }
+            }
+        }
+        return domainFields.contains(field.getName());
     }
 
-    /**
-     * 显示所有域模型信息
-     *
-     * @param searchConditionListRO
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "listAll", method = RequestMethod.POST)
-    public HttpResult<List<V>> listAll(@RequestBody SearchConditionListRO searchConditionListRO) throws Exception {
-        List<V> resultList = baseService.listAll(clazzD, clazzV, searchConditionListRO.getSearchConditionList());
+    protected HttpResult<List<V>> mappingAndList(Object param) throws Exception{
+        Class<?> paramClass = param.getClass();
+        Field[] paramFields = paramClass.getDeclaredFields();
+        SearchConditionBuilder builder = new SearchConditionBuilder();
+
+        for (Field paramField : paramFields) {
+            paramField.get(param);
+        }
+        return list(builder.toList());
+    }
+
+    protected HttpResult<PageResult<V>> page(List<SearchCondition> searchConditionList,PageCriteria pageCriteria ){
+        if (BaseEntity.class.isAssignableFrom(clazzD)){
+            searchConditionList.add(new SearchCondition("enable","=","1"));
+        }
+        return pageWithDisable(searchConditionList,pageCriteria);
+    }
+
+    protected HttpResult<PageResult<V>> pageWithDisable(List<SearchCondition> searchConditionList,PageCriteria pageCriteria){
+        if (BaseEntity.class.isAssignableFrom(clazzD)){
+            searchConditionList.add(new SearchCondition("isDelete","=","0"));
+        }
+        PageResult<V>       pageResult = baseService.listPage(clazzD, clazzV, pageCriteria, searchConditionList);
+        return HttpResult.success(pageResult);
+    }
+
+    protected HttpResult<List<V>> list(List<SearchCondition> searchConditionList) throws Exception {
+        if (BaseEntity.class.isAssignableFrom(clazzD)){
+            searchConditionList.add(new SearchCondition("enable","=","1"));
+        }
+        return listWithDisable(searchConditionList);
+    }
+
+    protected HttpResult<List<V>> listWithDisable(List<SearchCondition> searchConditionList) throws Exception {
+        if (BaseEntity.class.isAssignableFrom(clazzD)){
+            searchConditionList.add(new SearchCondition("isDelete","=","0"));
+        }
+        List<V>             resultList = baseService.listAll(clazzD, clazzV, searchConditionList);
         return HttpResult.success(resultList);
     }
 
-    /**
-     * 获取编号
-     *
-     * @param authenticationRO
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "getNumber", method = RequestMethod.POST)
-    public HttpResult<String> getNumber(@RequestBody AuthenticationRO authenticationRO) throws Exception {
-//        Map<String, Object> map = new HashMap<>();
-        String number = commonService.getBizObjectSerialNumber(clazzD.getSimpleName());
-//        map.put("data", number);
-        return HttpResult.success(number);
-    }
-
-    /**
-     * 获取单个域模型信息
-     *
-     * @param idRO
-     * @return
-     */
-    @RequestMapping(value = "getById", method = RequestMethod.POST)
-    public HttpResult<V> getById(@RequestBody IdRO idRO) throws Exception{
-        Object objId = null;
-        Method methodId = clazzD.getMethod("getId");
-        if (methodId.getReturnType().getSimpleName().equals("Long")) {
-            objId = Long.valueOf(idRO.getId());
-        } else if (methodId.getReturnType().getSimpleName().equals("String")) {
-            objId = idRO.getId();
-        }
-        D domain = this.baseService.queryById(clazzD, objId);
+    @ApiOperation("基础__根据id获取实体类")
+    @GetMapping("getById")
+    public HttpResult<V> getById(String id){
+        D domain = this.baseService.queryById(clazzD, id);
         if (BaseUtil.objectNotNull(domain)) {
-            Constructor<V> VOconstructor = clazzV.getConstructor(new Class[]{clazzD});
-            V voInstance = VOconstructor.newInstance(new Object[]{domain});
-            return HttpResult.success(voInstance);
+            try {
+                Constructor<V> VOconstructor = clazzV.getConstructor(clazzD);
+                V              voInstance    = VOconstructor.newInstance(domain);
+                return HttpResult.success(voInstance);
+            } catch (Exception e) {
+//                e.printStackTrace();
+                throw new RuntimeException(clazzV.getSimpleName()+"缺少对应域模型的构造方法");
+            }
+
         } else {
-            throw new RuntimeException("未查询到" + idRO.getId() + "的对象:" + clazzD.getSimpleName());
+            throw new RuntimeException("未查询到" + id + "的对象:" + clazzD.getSimpleName());
         }
     }
 
-    @RequestMapping(value = "delete", method = RequestMethod.POST)
-    @ResponseBody
-    public HttpResult delete(@RequestBody IdRO idRO) throws Exception {
-        baseService.deleteById(clazzD, idRO);
-        return HttpResult.success();
-    }
-
-    /**
-     * 更新status状态
-     * @param changeStatusRO
-     * @return
-     */
-    @RequestMapping(value = "changeStatus", method = RequestMethod.POST)
-    public HttpResult changeStatus(@RequestBody ChangeStatusRO changeStatusRO) throws Exception {
-        Object objId = null;
-        Method methodId = clazzD.getMethod("getId");
-        if (methodId.getReturnType().getSimpleName().equals("Long")) {
-            objId = Long.valueOf(changeStatusRO.getId());
-        } else if (methodId.getReturnType().getSimpleName().equals("String")) {
-            objId = changeStatusRO.getId();
-        }
-
-        D domain = this.baseService.queryById(clazzD, objId);
+    protected  <T> HttpResult<T> getDetailById(String id,Class<T> dvClass){
+        D domain = this.baseService.queryById(clazzD, id);
         if (BaseUtil.objectNotNull(domain)) {
-            Method mSetStatus = clazzD.getMethod("setStatus", int.class);
-            mSetStatus.invoke(domain, changeStatusRO.getStatus());
+            try {
+                Constructor<T> VOconstructor = dvClass.getConstructor(clazzD);
+                T voInstance = VOconstructor.newInstance(domain);
+                return HttpResult.success(voInstance);
+            } catch (Exception e) {
+                throw new RuntimeException(clazzV.getSimpleName()+"缺少对应域模型的构造方法");
+            }
+
+        } else {
+            throw new RuntimeException("未查询到" + id + "的对象:" + clazzD.getSimpleName());
+        }
+    }
+
+    @ApiOperation("基础__更新status状态")
+    @PostMapping("changeStatus")
+    public HttpResult delete(@RequestBody ChangeStatusRO ro) throws Exception {
+        D domain = this.baseService.queryById(clazzD, ro.getId());
+        if (BaseEntity.class.isAssignableFrom(clazzD)) {
+            ((BaseEntity)domain).setEnable(ro.getEnable());
             this.baseService.update(domain);
-            return HttpResult.success();
+            return HttpResult.success(Boolean.TRUE);
         } else {
-            throw new RuntimeException("未查询到" + changeStatusRO.getId() + "的对象:" + clazzD.getSimpleName());
-//                map.put("flag", "1");
-//                map.put("msg", "未查询到" + changeStatusRO.getId() + "的对象:" + clazzD.getSimpleName());
+            throw new RuntimeException("该域模型没有删除状态");
         }
     }
+
+    @ApiOperation("假删除")
+    @PostMapping(value = "delete")
+    public HttpResult<Boolean> changeStatus(String id) throws Exception {
+        D domain = this.baseService.queryById(clazzD, id);
+        if (BaseEntity.class.isAssignableFrom(clazzD)) {
+            BaseEntity baseEntity = (BaseEntity) domain;
+            if (baseEntity.getIsDelete()==0){
+                baseEntity.setIsDelete(1);
+                this.baseService.update(domain);
+            }
+            return HttpResult.success(Boolean.TRUE);
+        } else {
+            throw new RuntimeException("该域模型没有启用禁用状态");
+        }
+    }
+
 
 }

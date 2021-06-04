@@ -45,11 +45,15 @@ public class SearchConditionBuilder {
     }
 
     public SearchConditionBuilder addLikeAny(String name, String value){
-        return add(name,"like","%"+value+"%");
+        if (StringUtil.stringNotNull(value))
+            return add(name,"like","%"+value+"%");
+        return this;
     }
 
     public SearchConditionBuilder addLikeStart(String name, String value){
-        return add(name,"like","%"+value);
+        if (StringUtil.stringNotNull(value))
+            return add(name,"like","%"+value);
+        return this;
     }
 
     public SearchConditionBuilder addOrderDesc(String name){

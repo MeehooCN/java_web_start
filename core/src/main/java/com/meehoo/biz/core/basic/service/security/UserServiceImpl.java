@@ -7,6 +7,7 @@ import com.meehoo.biz.core.basic.domain.security.*;
 import com.meehoo.biz.core.basic.handler.UserManager;
 import com.meehoo.biz.core.basic.param.PageCriteria;
 import com.meehoo.biz.core.basic.param.PageResult;
+import com.meehoo.biz.core.basic.param.SearchCondition;
 import com.meehoo.biz.core.basic.ro.bos.PageRO;
 import com.meehoo.biz.core.basic.ro.bos.SearchConditionListRO;
 import com.meehoo.biz.core.basic.ro.security.OrganizationRoleRO;
@@ -329,11 +330,11 @@ public class UserServiceImpl extends BaseService implements IUserService {
     }
 
     @Override
-    public PageResult<UserVO> listPage(PageRO pageRO) throws Exception {
+    public PageResult<UserVO> listPage(List<SearchCondition> searchConditionList,PageRO pageRO) throws Exception {
         PageCriteria pc = new PageCriteria(pageRO.getPage(), pageRO.getRows());
         PageResult<UserVO> userPageResult;
 //        if (UserContextUtil.getAdmin() != null) {
-            userPageResult = this.listPage(User.class, UserVO.class, pc, pageRO.getSearchConditionList());
+            userPageResult = this.listPage(User.class, UserVO.class, pc, searchConditionList);
             List<UserVO> userVOList = userPageResult.getRows();
             if (BaseUtil.collectionNotNull(userVOList)) {
                 List<UserOrganization> userOrgList = userOrganizationDao.findByUserIdIn(StreamUtil.extractFieldToList(userVOList, UserVO::getId));

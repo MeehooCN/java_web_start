@@ -16,11 +16,9 @@ import java.util.Map;
  * Created by CZ on 2018/1/17.
  */
 public interface IOrganizationService extends IBaseService {
-    Map<String, Object> createOrUpdate(Map<String, Object> map, OrganizationRO organizationRO) throws Exception;
+    String createOrUpdate(OrganizationRO organizationRO) throws Exception;
 
     OrganizationTreeTotalVO listAll() throws Exception;
-
-    List<OrganizationTreeVO> listAll(String userId) throws Exception;
 
     List<OrganizationVO> getSubOrgList(String parentOrgId) throws Exception;
 
@@ -53,4 +51,6 @@ public interface IOrganizationService extends IBaseService {
     List<Organization> listRoot();
 
     List<Organization> getAllOrganization()throws Exception;
+
+    OrganizationTreeTotalVO getAllOrganizationWithEnable() throws Exception;
 }

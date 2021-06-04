@@ -16,6 +16,7 @@ public abstract class BaseEntityVO extends IdEntityVO {
     protected String name;
     protected String code;
     protected int isDelete;
+    protected String enableStr;
 //    protected String statusShow;
 
     protected BaseEntityVO(BaseEntity baseEntity) {
@@ -23,6 +24,6 @@ public abstract class BaseEntityVO extends IdEntityVO {
         this.name = baseEntity.getName();
         this.code = baseEntity.getCode();
         this.isDelete = baseEntity.getIsDelete();
-//        this.statusShow = baseEntity.getIsDelete() == 0 ? "启用" : "禁用";
+        this.enableStr = baseEntity.getEnable() == 1 ? "启用" : "禁用";
     }
 }

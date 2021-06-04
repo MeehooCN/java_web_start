@@ -4,10 +4,7 @@ import com.meehoo.biz.common.util.BaseUtil;
 import com.meehoo.biz.common.util.StringUtil;
 import com.meehoo.biz.core.basic.domain.setting.DictType;
 import com.meehoo.biz.core.basic.domain.setting.DictValue;
-import com.meehoo.biz.core.basic.param.HttpResult;
-import com.meehoo.biz.core.basic.param.PageCriteria;
-import com.meehoo.biz.core.basic.param.PageResult;
-import com.meehoo.biz.core.basic.param.SearchCondition;
+import com.meehoo.biz.core.basic.param.*;
 import com.meehoo.biz.core.basic.ro.IdRO;
 import com.meehoo.biz.core.basic.ro.setting.DictTypeModuleNumberRO;
 import com.meehoo.biz.core.basic.ro.setting.DictValueRO;
@@ -17,6 +14,7 @@ import com.meehoo.biz.core.basic.vo.setting.DictValueVO;
 import com.meehoo.biz.web.controller.basic.common.BaseController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,16 +35,11 @@ import java.util.Map;
 @Api(tags = "数据字典的值管理")
 @RestController
 @RequestMapping("/sysmanage/dictValue")
+@AllArgsConstructor
 public class DictValueController extends BaseController<DictValue,DictValueVO> {
     private final IDictValueService dictValueService;
     private final IDictTypeService dictTypeService;
 
-    @Autowired
-    public DictValueController(IDictValueService dictValueService, IDictTypeService dictTypeService) {
-        super(dictValueService);
-        this.dictValueService = dictValueService;
-        this.dictTypeService = dictTypeService;
-    }
 
     /**
      * 新增
@@ -130,10 +123,8 @@ public class DictValueController extends BaseController<DictValue,DictValueVO> {
      * 根据数据字典类型Id获取数据
      */
     @RequestMapping(value = "pageByTypeId", method = RequestMethod.POST)
-    public HttpResult<PageResult<DictValueVO>>   pageByTypeId(PageCriteria pageCriteria, String typeId) throws Exception {
-        List<SearchCondition> searchConditions = new ArrayList<>();
-        searchConditions.add(new SearchCondition("dictType.id",typeId,"="));
-        PageResult<DictValueVO> dictValueVOList = dictValueService.listPage(DictValue.class,DictValueVO.class,pageCriteria,searchConditions);
-        return HttpResult.success(dictValueVOList);
+    public HttpResult<PageResult<DictValueVO>>   pageByTypeId(PageCriteria pageCriteria, String typeId){
+        SearchConditionBuilder builder = new SearchConditionBuilder().addEq("dictType.id",typeId);
+        return page(builder.toList(),pageCriteria);
     }
 }

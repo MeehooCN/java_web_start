@@ -1,7 +1,9 @@
 package com.meehoo.biz.core.basic.domain.security;
 
 import com.meehoo.biz.core.basic.annotation.SetBySystem;
+import com.meehoo.biz.core.basic.domain.BaseEntity;
 import com.meehoo.biz.core.basic.domain.IdEntity;
+import com.meehoo.biz.core.basic.domain.TimeEntity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
@@ -19,7 +21,7 @@ import java.util.Date;
 @DynamicUpdate
 @Data
 @Accessors(chain = true)
-public class Admin extends IdEntity {
+public class Admin extends TimeEntity {
 
     /**
      * 登录名
@@ -35,17 +37,6 @@ public class Admin extends IdEntity {
      */
     @Column
     private String headPic;
-    /**
-     * 创建时间
-     */
-    @Column
-    @SetBySystem(createOnly = true)
-    private Date createTime;
-    /**
-     * 更新时间
-     */
-    @Column
-    private Date updateTime;
 
     @Column(length = 50)
     private String roleName;

@@ -47,7 +47,7 @@ public class OrganizationServiceImpl extends BaseService implements IOrganizatio
 
     @Transactional
     @Override
-    public Map<String, Object> createOrUpdate(Map<String, Object> map, OrganizationRO organizationRO) throws Exception {
+    public String createOrUpdate(OrganizationRO organizationRO) throws Exception {
         Organization thisOrg;
         if (StringUtil.stringNotNull(organizationRO.getId())) {
             thisOrg = this.queryById(Organization.class, organizationRO.getId());
@@ -78,10 +78,7 @@ public class OrganizationServiceImpl extends BaseService implements IOrganizatio
         }
         commonService.setProvinceCityAreaAndAddress(thisOrg, organizationRO);
         this.saveOrUpdate(thisOrg);
-        if (BaseUtil.collectionNotNull(organizationRO.getSubOrgROList())) {
-            mergeSubOrgList(thisOrg, organizationRO.getSubOrgROList());
-        }
-        return map;
+        return thisOrg.getId();
     }
 
     // 每三位表示一个层级
@@ -118,15 +115,15 @@ public class OrganizationServiceImpl extends BaseService implements IOrganizatio
 
 
     @Override
-    public OrganizationTreeTotalVO listAll() throws Exception {
+    public OrganizationTreeTotalVO listAll(){
         OrganizationTreeTotalVO orgTotalTreeVO = new OrganizationTreeTotalVO();
         List<Organization> topOrgList = new ArrayList<>();
-        List<Organization> orgList = organizationDao.findAll();
+        List<Organization> orgList = organizationDao.findByIsDelete(0);
         for (Organization org : orgList) {
             Organization parentOrg = org.getParentOrg();
-            if (parentOrg == null) {
+            if (parentOrg == null)
                 topOrgList.add(org);
-            } else
+            else
                 parentOrg.getSubOrgList().add(org);
         }
         orgTotalTreeVO.setTotal((long) orgList.size());
@@ -135,22 +132,7 @@ public class OrganizationServiceImpl extends BaseService implements IOrganizatio
     }
 
     @Override
-    public List<OrganizationTreeVO> listAll(String userId) throws Exception {
-        List<Organization> topOrgList = new ArrayList<>();
-        List<Organization> orgList = organizationDao.findAll();
-
-        for (Organization org : orgList) {
-            Organization parentOrg = org.getParentOrg();
-            if (parentOrg == null) {
-                topOrgList.add(org);
-            } else
-                parentOrg.getSubOrgList().add(org);
-        }
-        return VOUtil.convertDomainListToTempList(topOrgList, OrganizationTreeVO.class);
-    }
-
-    @Override
-    public List<OrganizationVO> getSubOrgList(String parentOrgId) throws Exception {
+    public List<OrganizationVO> getSubOrgList(String parentOrgId) {
         List<Organization> orgList;
         if (StringUtil.stringNotNull(parentOrgId)) {
             orgList = organizationDao.findByParentOrgId(parentOrgId);
@@ -161,7 +143,7 @@ public class OrganizationServiceImpl extends BaseService implements IOrganizatio
     }
 
     @Override
-    public List<Organization> getAllSubOrg(String parentOrgCode) throws Exception {
+    public List<Organization> getAllSubOrg(String parentOrgCode){
         DetachedCriteria dc = DetachedCriteria.forClass(Organization.class);
         dc.add(Restrictions.like("code",parentOrgCode, MatchMode.START));
         return list(dc);
@@ -185,7 +167,7 @@ public class OrganizationServiceImpl extends BaseService implements IOrganizatio
     }
 
     @Override
-    public List<OrganizationVO> queryByUserId(String userId) throws Exception {
+    public List<OrganizationVO> queryByUserId(String userId){
         List<String> orgIdList = allSubOrgIdListByUserId(userId);
         orgIdList.add(userOrganizationDao.findByUserId(userId).get(0).getOrganization().getId());
         List<Organization> orgList = organizationDao.queryByIdList(orgIdList);
@@ -193,7 +175,7 @@ public class OrganizationServiceImpl extends BaseService implements IOrganizatio
     }
 
     @Override
-    public List<OrganizationVO> listOrgAndSubOrg(String orgId) throws Exception {
+    public List<OrganizationVO> listOrgAndSubOrg(String orgId){
         List<Organization> orgList = new ArrayList<>();
         Organization organization = this.queryById(Organization.class, orgId);
         orgList.add(organization);
@@ -204,7 +186,7 @@ public class OrganizationServiceImpl extends BaseService implements IOrganizatio
     }
 
     @Override
-    public boolean delete( String id) throws Exception {
+    public boolean delete( String id){
         boolean result = false;
         try {
             organizationDao.deleteById(id);
@@ -216,7 +198,7 @@ public class OrganizationServiceImpl extends BaseService implements IOrganizatio
     }
 
     @Override
-    public Organization queryById(String orgId) throws Exception {
+    public Organization queryById(String orgId){
         return organizationDao.queryById(orgId);
     }
 
@@ -261,36 +243,29 @@ public class OrganizationServiceImpl extends BaseService implements IOrganizatio
         return organizationDao.listRoot();
     }
 
-    private void mergeSubOrgList(Organization parentOrg, List<OrganizationRO> subOrgROList) throws Exception {
-        if (BaseUtil.objectNotNull(parentOrg) && BaseUtil.collectionNotNull(subOrgROList)) {
-            List<Organization> subOrgList = organizationDao.findByParentOrgId(parentOrg.getId());
-            Map<String, Organization> subOrgMap = subOrgList.stream().collect(Collectors.toMap(Organization::getId,e->e));
-//            List<Organization> needSaveSubOrgList = new ArrayList<>();
-            for (OrganizationRO ro : subOrgROList) {
-                Organization org;
-                if (StringUtil.stringNotNull(ro.getId())) {
-                    org = subOrgMap.get(ro.getId());
-                    if (org == null) {
-                        continue;
-                    }
-                    org.setName(ro.getName());
-                } else {
-                    org = new Organization();
-                    org.setCode(commonService.getBizObjectSerialNumber("Organization"));
-                    org.setName(ro.getName());
-                    org.setParentOrg(parentOrg).setGrade(parentOrg.getGrade() + 1).setIsLeaf(Organization.ISLeaf_YES);
-                }
-                if (BaseUtil.collectionNotNull(ro.getSubOrgROList())) {
-                    this.saveOrUpdate(org);
-                    mergeSubOrgList(org, ro.getSubOrgROList());
-                }
-            }
-//            this.mergeEntryList(subOrgList, needSaveSubOrgList);
-        }
+
+    @Override
+    public List<Organization> getAllOrganization(){
+        return organizationDao.findAll();
     }
 
     @Override
-    public List<Organization> getAllOrganization()throws Exception{
-        return organizationDao.findAll();
+    public OrganizationTreeTotalVO getAllOrganizationWithEnable(){
+        OrganizationTreeTotalVO orgTotalTreeVO = new OrganizationTreeTotalVO();
+        List<Organization> topOrgList = new ArrayList<>();
+        List<Organization> orgList = organizationDao.findAll();
+        for (Organization org : orgList) {
+            if(org.getIsDelete() == 1){
+                continue;
+            }
+            Organization parentOrg = org.getParentOrg();
+            if (parentOrg == null) {
+                topOrgList.add(org);
+            } else
+                parentOrg.getSubOrgList().add(org);
+        }
+        orgTotalTreeVO.setTotal((long) orgList.size());
+        orgTotalTreeVO.setChildren(VOUtil.convertDomainListToTempList(topOrgList, OrganizationTreeVO.class));
+        return orgTotalTreeVO;
     }
 }

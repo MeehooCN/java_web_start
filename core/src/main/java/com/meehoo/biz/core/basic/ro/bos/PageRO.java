@@ -23,25 +23,25 @@ public class PageRO{
 
     private int page;  //当前第几页
 
-    private List<SearchCondition> searchConditionList;
+//    private List<SearchCondition> searchConditionList;
 
     public PageRO() {
         rows = 10;
         page = 1;
     }
 
-    public List<SearchCondition> getSearchConditionList() {
-        if (searchConditionList == null) {
-            searchConditionList = new ArrayList<>();
-        }
-        return searchConditionList;
-    }
+//    public List<SearchCondition> getSearchConditionList() {
+//        if (searchConditionList == null) {
+//            searchConditionList = new ArrayList<>();
+//        }
+//        return searchConditionList;
+//    }
+//
+//    public void setSearchConditionList(List<SearchCondition> searchConditionList) {
+//        this.searchConditionList = searchConditionList;
+//    }
 
-    public void setSearchConditionList(List<SearchCondition> searchConditionList) {
-        this.searchConditionList = searchConditionList;
-    }
-
-    public PageCriteria getPageCriteria() {
+    public PageCriteria toPageCriteria() {
         return new PageCriteria(page, rows);
     }
 

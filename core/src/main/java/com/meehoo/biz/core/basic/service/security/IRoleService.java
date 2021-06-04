@@ -22,5 +22,5 @@ public interface IRoleService extends IBaseService {
 
     List<RoleVO> listByRoleType(Integer roleType) throws Exception;
 
-    int getNextCode();
+    String getNextCode();
 }

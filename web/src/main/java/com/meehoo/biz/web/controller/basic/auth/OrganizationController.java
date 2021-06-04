@@ -16,6 +16,7 @@ import com.meehoo.biz.core.basic.vo.security.OrganizationVO;
 import com.meehoo.biz.web.controller.basic.common.BaseController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,35 +30,15 @@ import java.util.Map;
 @Api(tags = "组织机构管理")
 @RestController
 @RequestMapping("/security/organization")
+@AllArgsConstructor
 public class OrganizationController extends BaseController<Organization, OrganizationVO> {
 
     private final IOrganizationService organizationService;
 
-    @Autowired
-    public OrganizationController(IOrganizationService organizationService) {
-        super(organizationService);
-        this.organizationService = organizationService;
-    }
 
-    @RequestMapping(value = "create", method = RequestMethod.POST)
+    @PostMapping("create")
     public HttpResult<String> create(@RequestBody OrganizationRO organizationRO) throws Exception {
-        Map<String, Object> map = organizationRO.checkFields();//成功状态的map为空
-//        if (!"0".equals(map.get("flag")))
-//            throw new RuntimeException("请输入机构名称");
-
-        organizationService.createOrUpdate(map, organizationRO);
-
-        return HttpResult.success();
-    }
-
-    @RequestMapping(value = "update", method = RequestMethod.POST)
-    public HttpResult<String> update(@RequestBody OrganizationRO organizationRO) throws Exception {
-        Map<String, Object> map = organizationRO.checkFields();
-//        if (BaseUtil.mapContainsErrorFlag(map))
-//            throw new RuntimeException("请输入机构名称");
-        map = organizationService.createOrUpdate(map, organizationRO);
-
-        return HttpResult.success();
+        return HttpResult.success(organizationService.createOrUpdate( organizationRO));
     }
 
     /**
@@ -65,7 +46,7 @@ public class OrganizationController extends BaseController<Organization, Organiz
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "listAllForAdmin", method = RequestMethod.POST)
+    @PostMapping("listAllInTree")
     public HttpResult<OrganizationTreeTotalVO> listAllForAdmin() throws Exception {
         OrganizationTreeTotalVO organizationTreeTotalVO = organizationService.listAll();
         return HttpResult.success(organizationTreeTotalVO);
@@ -76,25 +57,10 @@ public class OrganizationController extends BaseController<Organization, Organiz
      * 查询所有根节点
      */
     @PostMapping("listRoot")
-    public HttpResult<List<OrganizationVO>> listRoot() throws Exception {
+    public HttpResult<List<OrganizationVO>> listRoot(){
         List<Organization> organizations = organizationService.listRoot();
         List<OrganizationVO> organizationVOS = VOUtil.convertDomainListToTempList(organizations, OrganizationVO.class);
         return HttpResult.success(organizationVOS);
-    }
-
-    /**
-     * 查询所有机构并标记被查询用户所属的机构
-     *
-     * @param idRO
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "listAllForUser", method = RequestMethod.POST)
-    public HttpResult<List<OrganizationTreeVO>> test(@RequestBody IdRO idRO) throws Exception {
-        if (StringUtil.stringIsNull(idRO.getId()))
-            throw new RuntimeException("请选择要查询的用户");
-        List<OrganizationTreeVO> organizationTreeVOS = organizationService.listAll(idRO.getId());
-        return HttpResult.success(organizationTreeVOS);
     }
 
     /**
@@ -104,13 +70,13 @@ public class OrganizationController extends BaseController<Organization, Organiz
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "listSubOrg", method = RequestMethod.POST)
+    @PostMapping("listSubOrg")
     public HttpResult<List<OrganizationVO>> listSubOrg(@RequestBody IdRO idRO) throws Exception {
         List<OrganizationVO> voList = organizationService.getSubOrgList(idRO.getId());
         return HttpResult.success(voList);
     }
 
-    @RequestMapping(value = "listSubOrgTree", method = RequestMethod.POST)
+    @PostMapping("listSubOrgTree")
     public HttpResult<List<OrganizationTreeVO>> listSubOrgTree(String parentOrgCode) throws Exception {
         List<OrganizationTreeVO> voList = organizationService.getSubOrgListTree(parentOrgCode);
         return HttpResult.success(voList);
@@ -136,17 +102,11 @@ public class OrganizationController extends BaseController<Organization, Organiz
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "listOrgAndSubOrg", method = RequestMethod.POST)
+    @PostMapping("listOrgAndSubOrg")
     public HttpResult< List<OrganizationVO>> listOrgAndSubOrg(@RequestBody AuthenticationRO authenticationRO) throws Exception {
         List<OrganizationVO> voList = organizationService.listOrgAndSubOrg(authenticationRO.getCurrOrgId());
         return HttpResult.success(voList);
     }
-
-//    @RequestMapping(value = "delete", method = RequestMethod.POST)
-//    public HttpResult delete(@RequestBody IdRO idRO) throws Exception {
-//        organizationService.delete(idRO.getId());
-//        return new HttpResult();
-//    }
 
     @ApiOperation("根据名称类型模糊查询单位")
     @GetMapping("getOrgByNameAndType")
@@ -158,5 +118,17 @@ public class OrganizationController extends BaseController<Organization, Organiz
             conditionList.add(new SearchCondition("projectType",typeName,"like"));
         List<OrganizationVO> organizationVOS = organizationService.listAll(Organization.class, OrganizationVO.class, conditionList);
         return HttpResult.success(organizationVOS);
+    }
+
+    /**
+     * 查询所有状态为启用的机构
+     *
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("listAllEnableForAdmin")
+    public HttpResult<OrganizationTreeTotalVO> listAllEnableForAdmin() throws Exception {
+        OrganizationTreeTotalVO organizationTreeTotalVO = organizationService.getAllOrganizationWithEnable();
+        return HttpResult.success(organizationTreeTotalVO);
     }
 }

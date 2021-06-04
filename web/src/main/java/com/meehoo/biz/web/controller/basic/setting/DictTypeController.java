@@ -15,6 +15,7 @@ import com.meehoo.biz.core.basic.vo.setting.DataDictVO;
 import com.meehoo.biz.core.basic.vo.setting.DictTypeVO;
 import com.meehoo.biz.web.controller.basic.common.BaseController;
 import io.swagger.annotations.Api;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,16 +32,11 @@ import java.util.Map;
 @Api(tags = "数据字典类型管理")
 @RestController
 @RequestMapping("/sysmanage/dictType")
+@AllArgsConstructor
 public class DictTypeController extends BaseController<DictType,DictTypeVO> {
     private final IDictTypeService dictTypeService;
     private final ICommonService commonService;
 
-    @Autowired
-    public DictTypeController(IDictTypeService dictTypeService, ICommonService commonService) {
-        super(dictTypeService);
-        this.dictTypeService = dictTypeService;
-        this.commonService = commonService;
-    }
 
     /**
      * 根据数据字典的类型查询

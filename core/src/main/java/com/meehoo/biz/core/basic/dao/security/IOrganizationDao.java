@@ -11,12 +11,8 @@ import java.util.List;
  * Created by CZ on 2018/1/16.
  */
 public interface IOrganizationDao extends JpaRepository<Organization, String> {
-
     @Query("FROM Organization WHERE parentOrg.id = ?1")
     List<Organization> findByParentOrgId(String id);
-
-    @Query("FROM Organization WHERE id=?1 OR parentOrg.id = ?1")
-    List<Organization> findOrgAndSubOrgById(String id);
 
     @Query("FROM Organization WHERE grade = 0 and isLeaf ="+Organization.ISLeaf_NO)
     List<Organization> findTopOrg();
@@ -24,14 +20,11 @@ public interface IOrganizationDao extends JpaRepository<Organization, String> {
     @Query(nativeQuery=true, value = "select * from sec_org WHERE id=?1  ")
     Organization queryById(String Id);
 
-    @Modifying(clearAutomatically = true)
-    @Query(nativeQuery=true, value = "update sec_org set codeId=?1 where id=?2")
-    void updateById(Integer codeId, String id);
-
     @Query(nativeQuery=true, value = "select * from sec_org WHERE id in ?1 order by orgType desc")
     List<Organization> queryByIdList(List<String> orgIdList);
 
     @Query("FROM Organization WHERE parentOrg.id = null")
     List<Organization> listRoot();
 
+    List<Organization> findByIsDelete(int isDelete);
 }

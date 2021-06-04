@@ -6,10 +6,7 @@ import com.meehoo.biz.common.util.StringUtil;
 import com.meehoo.biz.core.basic.domain.security.Admin;
 import com.meehoo.biz.core.basic.domain.security.Organization;
 import com.meehoo.biz.core.basic.handler.UserManager;
-import com.meehoo.biz.core.basic.param.HttpResult;
-import com.meehoo.biz.core.basic.param.PageCriteria;
-import com.meehoo.biz.core.basic.param.PageResult;
-import com.meehoo.biz.core.basic.param.SearchCondition;
+import com.meehoo.biz.core.basic.param.*;
 import com.meehoo.biz.core.basic.ro.IdRO;
 import com.meehoo.biz.core.basic.ro.security.AdminRO;
 import com.meehoo.biz.core.basic.ro.security.AdminSearchRO;
@@ -27,6 +24,7 @@ import com.meehoo.biz.web.config.ApplicationValues;
 import com.meehoo.biz.web.controller.basic.common.BaseControllerPlus;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,43 +37,25 @@ import java.util.List;
 @Api(tags = "管理员管理")
 @RestController
 @RequestMapping("/security/admin")
+@AllArgsConstructor
 public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
     private final IAdminService adminService;
     private final IAuthMenuService authMenuService;
     private final IOrganizationService organizationService;
-    private final String context_path;
+//    private final String context_path;
 
-    @Autowired
-    public AdminController(IAdminService adminService,
-                           IAuthMenuService authMenuService,IOrganizationService organizationService, ApplicationValues applicationValues){
-        super(adminService);
-        this.adminService = adminService;
-        this.authMenuService = authMenuService;
-        this.organizationService = organizationService;
-        this.context_path = applicationValues.getContext_path_web();
-    }
 
     @ApiOperation("管理员列表条件查询")
     @GetMapping("list")
-    public HttpResult listAdmin(AdminSearchRO ro) throws Exception {
-        PageCriteria pageCriteria = new PageCriteria(ro.getPage(), ro.getRows());
-        List<SearchCondition> searchConditions = new ArrayList<>();
-        SearchCondition searchCondition = new SearchCondition("isDelete", "equal", "0");
-        SearchCondition orgCondition = new SearchCondition("organizationCode", "like", ro.getOrganizationCode() + '%');
-        SearchCondition userNameCondition = new SearchCondition("userName", "like", ro.getUserName() + '%');
-        searchConditions.add(searchCondition);
-        searchConditions.add(orgCondition);
-        searchConditions.add(userNameCondition);
-        if (StringUtil.stringNotNull(ro.getName())){
-            SearchCondition condition = new SearchCondition("name","like",ro.getName());
-            searchConditions.add(condition);
-        }
-        PageResult<AdminVO> adminVOPageResult = adminService.listPage(Admin.class, AdminVO.class, pageCriteria, searchConditions);
-        return HttpResult.success(adminVOPageResult);
+    public HttpResult<PageResult<AdminVO>> listAdmin(AdminSearchRO ro) throws Exception {
+        SearchConditionBuilder builder = new SearchConditionBuilder()
+                .addLikeStart("organizationCode",ro.getOrganizationCode())
+                .addLikeStart("username",ro.getUserName()).addLikeAny("name",ro.getName());
+        return page(builder.toList(),ro.toPageCriteria());
     }
 
     @ApiOperation("重置密码")
-    @RequestMapping(value = "resetPwd", method = RequestMethod.POST)
+    @PostMapping("resetPwd")
     @ResponseBody
     public HttpResult<String> resetPwd(@RequestBody IdRO idPO) throws Exception {
         Admin admin = adminService.queryById(Admin.class, idPO.getId());
@@ -85,7 +65,7 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
     }
 
     @ApiOperation("修改密码")
-    @RequestMapping(value ="modifyPassword",method = RequestMethod.POST)
+    @PostMapping("modifyPassword")
     @ResponseBody
     public HttpResult<String> modifyPassword(@RequestBody ModifyPasswordRO modifyPasswordVO) throws Exception{
         Admin admin = adminService.queryById(Admin.class, modifyPasswordVO.getId());
@@ -116,7 +96,7 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value ="create",method = RequestMethod.POST)
+    @PostMapping("create")
     @ResponseBody
     @Override
     public HttpResult<String> create(@RequestBody AdminRO ro) throws Exception{
@@ -142,7 +122,7 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value ="update",method = RequestMethod.POST)
+    @PostMapping("update")
     @ResponseBody
     @Override
     public HttpResult update(@RequestBody AdminRO ro) throws Exception{
@@ -159,7 +139,7 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
         return HttpResult.success();
     }
 
-    @RequestMapping(value = "getCurrLoginAdmin", method = RequestMethod.POST)
+    @PostMapping("getCurrLoginAdmin")
     public HttpResult<AdminVO> getCurrLoginAdmin() throws Exception {
 //        ControllerMessage controllerMessage = new ControllerMessage();
         Admin user = UserManager.getCurrentAdmin();
@@ -174,36 +154,36 @@ public class AdminController extends BaseControllerPlus<Admin,AdminVO,AdminRO> {
         return HttpResult.success(userVO);
     }
 
-    /**
-     * 删除管理员
-     * @param ro
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value ="delete",method = RequestMethod.POST)
-    @ResponseBody
-    @Override
-    public HttpResult delete(@RequestBody IdRO ro) throws Exception{
-        adminService.deleteById(Admin.class,ro.getId());
-        return HttpResult.success();
-    }
+//    /**
+//     * 删除管理员
+//     * @param ro
+//     * @return
+//     * @throws Exception
+//     */
+//    @PostMapping("delete")
+//    @ResponseBody
+//    @Override
+//    public HttpResult delete(@RequestBody IdRO ro) throws Exception{
+//        adminService.deleteById(Admin.class,ro.getId());
+//        return HttpResult.success();
+//    }
 
 
     /**
      * 获取当前登录的管理员用户的菜单
      * @return
      */
-    @RequestMapping(value = "getAdminHasMenuList", method = RequestMethod.POST)
+    @PostMapping("getAdminHasMenuList")
     @ResponseBody
     public HttpResult<AuthMenuTreeVO> getRoleHasMenuList() throws Exception{
         Admin admin = UserManager.getCurrentAdmin();
         AuthMenuTreeVO menuListByAdminId = authMenuService.getMenuListByAdminId(admin.getId());
 
-        if (StringUtil.stringNotNull(context_path)){
-            for (MenuVO menuVO : menuListByAdminId.getChildren()) {
-                fillUrl(menuVO,context_path);
-            }
-        }
+//        if (StringUtil.stringNotNull(context_path)){
+//            for (MenuVO menuVO : menuListByAdminId.getChildren()) {
+//                fillUrl(menuVO,context_path);
+//            }
+//        }
 
         return HttpResult.success(menuListByAdminId);
     }

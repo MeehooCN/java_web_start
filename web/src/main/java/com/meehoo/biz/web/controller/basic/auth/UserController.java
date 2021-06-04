@@ -21,6 +21,7 @@ import com.meehoo.biz.core.basic.vo.security.*;
 import com.meehoo.biz.web.controller.basic.common.BaseController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,20 +36,12 @@ import java.util.Map;
 @Api(tags = "用户管理")
 @RestController
 @RequestMapping("/security/user")
+@AllArgsConstructor
 public class UserController extends BaseController<User, UserVO> {
     private final IUserService userService;
     private final IUserOrganizationDao userOrganizationDao;
     private final IAdminService adminService;
     private final IOrganizationService organizationService;
-
-    @Autowired
-    public UserController(IUserService userService,IUserOrganizationDao userOrganizationDao,IAdminService adminService,IOrganizationService organizationService) {
-        super(userService);
-        this.userService = userService;
-        this.userOrganizationDao = userOrganizationDao;
-        this.adminService = adminService;
-        this.organizationService = organizationService;
-    }
 
 
     @ApiOperation("查询人员,并按机构分类")
@@ -120,15 +113,13 @@ public class UserController extends BaseController<User, UserVO> {
         return HttpResult.success(userOrgAndRoleList);
     }
 
-    @Override
-    @ApiOperation("分页查询")
-    @RequestMapping(value = "list", method = RequestMethod.POST)
-    public HttpResult<PageResult<UserVO>> list(@RequestBody PageRO pagePO) throws Exception {
-        PageResult<UserVO> userVOPageResult = userService.listPage(pagePO);
-        return HttpResult.success(userVOPageResult);
-    }
+//    @ApiOperation("分页查询")
+//    @RequestMapping(value = "list", method = RequestMethod.POST)
+//    public HttpResult<PageResult<UserVO>> list(@RequestBody PageRO pagePO) throws Exception {
+//        PageResult<UserVO> userVOPageResult = userService.listPage(pagePO);
+//        return HttpResult.success(userVOPageResult);
+//    }
 
-    @Override
     @ApiOperation("查询所有")
     @PostMapping("listAll")
     public HttpResult<List<UserVO>> listAll(@RequestBody SearchConditionListRO searchConditionListRO) throws Exception {
@@ -143,7 +134,6 @@ public class UserController extends BaseController<User, UserVO> {
         return HttpResult.success(userVOS);
     }
 
-    @Override
     @ApiOperation("根据id查询")
     @RequestMapping(value = "getById", method = RequestMethod.POST)
     public HttpResult<UserVO> getById(@RequestBody IdRO idRO) throws Exception {
@@ -241,12 +231,12 @@ public class UserController extends BaseController<User, UserVO> {
 //    }
 
 
-    @Override
-    public HttpResult delete(@RequestBody IdRO idRO) throws Exception {
-        // 先删除与机构的中间表数据
-        List<UserOrganization> userOrganizationList = userOrganizationDao.findByUserId(idRO.getId());
-        if (userOrganizationList.size()>0)
-            userService.batchDelete(userOrganizationList);
-        return super.delete(idRO);
-    }
+//    @Override
+//    public HttpResult delete(@RequestBody IdRO idRO) throws Exception {
+//        // 先删除与机构的中间表数据
+//        List<UserOrganization> userOrganizationList = userOrganizationDao.findByUserId(idRO.getId());
+//        if (userOrganizationList.size()>0)
+//            userService.batchDelete(userOrganizationList);
+//        return super.delete(idRO);
+//    }
 }

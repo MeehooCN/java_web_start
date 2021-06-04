@@ -4,6 +4,7 @@ package com.meehoo.biz.core.basic.service.security;
 import com.meehoo.biz.core.basic.domain.security.Role;
 import com.meehoo.biz.core.basic.domain.security.User;
 import com.meehoo.biz.core.basic.param.PageResult;
+import com.meehoo.biz.core.basic.param.SearchCondition;
 import com.meehoo.biz.core.basic.ro.bos.PageRO;
 import com.meehoo.biz.core.basic.ro.bos.SearchConditionListRO;
 import com.meehoo.biz.core.basic.ro.security.OrganizationRoleRO;
@@ -43,7 +44,7 @@ public interface IUserService extends IBaseService {
 
     UserVO getById(String id) throws Exception;
 
-    PageResult<UserVO> listPage(PageRO pageRO) throws Exception;
+    PageResult<UserVO> listPage(List<SearchCondition> searchConditionList,PageRO pageRO) throws Exception;
 
     List<UserVO> listAll(SearchConditionListRO searchConditionListRO) throws Exception;
 

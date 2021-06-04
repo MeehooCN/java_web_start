@@ -35,13 +35,13 @@ public class RoleVO extends IdEntityVO{
 
     public RoleVO(Role role) throws Exception {
         this.id = role.getId();
-        int i = role.getCode();
-        if (i<9){
-            number = "00"+i;
-        }else if (i<99){
-            number = "0"+i;
+        String code = role.getCode();
+        if (code.length()==1){
+            number = "00"+code;
+        }else if (code.length()==2){
+            number = "0"+code;
         }else{
-            number = String.valueOf(i);
+            number = code;
         }
         this.name = role.getName();
         this.remark = role.getRemark();

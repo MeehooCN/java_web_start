@@ -14,7 +14,9 @@ import com.meehoo.biz.core.basic.vo.security.RoleVO;
 import com.meehoo.biz.web.controller.basic.common.BaseController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -27,16 +29,9 @@ import java.util.List;
 @Api(tags = "角色管理")
 @RestController
 @RequestMapping("/security/role")
+@AllArgsConstructor
 public class RoleController extends BaseController<Role,RoleVO> {
     private final IRoleService roleService;
-    private final ICommonService commonService;
-    @Autowired
-    public RoleController(IRoleService roleService,
-                          ICommonService commonService) {
-        super(roleService);
-        this.roleService = roleService;
-        this.commonService = commonService;
-    }
 
     /**
      * 新建角色信息
@@ -45,7 +40,7 @@ public class RoleController extends BaseController<Role,RoleVO> {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "create", method = RequestMethod.POST)
+    @PostMapping("create")
     public HttpResult<String> create(@RequestBody RoleRO roleRO) throws Exception {
         // 判断编号是否重复
 //        Role has = roleService.queryByNumber(roleRO.getNumber());
@@ -59,7 +54,7 @@ public class RoleController extends BaseController<Role,RoleVO> {
 //        }else {
 //            role.setCode((roleRO.getNumber()));
 //        }
-        role.setCode(roleService.getNextCode());
+//        role.setCode(roleService.getNextCode());
         role.setName(roleRO.getName());
         role.setRemark(roleRO.getRemark());
         role.setRoleType(roleRO.getRoleType());
@@ -76,7 +71,7 @@ public class RoleController extends BaseController<Role,RoleVO> {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "update", method = RequestMethod.POST)
+    @PostMapping("update")
     public HttpResult<String> update(@RequestBody RoleRO roleRO) throws Exception {
         Role role;
         if (StringUtil.stringNotNull(roleRO.getId())) {
@@ -99,7 +94,7 @@ public class RoleController extends BaseController<Role,RoleVO> {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "listByType", method = RequestMethod.POST)
+    @PostMapping("listByType")
     public HttpResult<List<RoleVO>> listByType(Integer roleType) throws Exception {
         List<RoleVO> roleVOList = roleService.listByRoleType(roleType);
         return HttpResult.success(roleVOList);
@@ -110,15 +105,13 @@ public class RoleController extends BaseController<Role,RoleVO> {
     public HttpResult<PageResult<RoleVO>> list(String name, PageCriteria pageCriteria) throws Exception{
         SearchConditionBuilder builder = new SearchConditionBuilder()
                 .addLikeStart("name",name).addOrderDesc("createTime");
-        PageResult<RoleVO> roleVOPageResult = roleService.listPage(Role.class, RoleVO.class, pageCriteria, builder.toList());
-        return HttpResult.success(roleVOPageResult);
+        return page(builder.toList(),pageCriteria);
     }
 
     @ApiOperation("列表查询")
     @GetMapping("listAll")
     public HttpResult<List<RoleVO>> listAll() throws Exception{
         SearchConditionBuilder builder = new SearchConditionBuilder().addOrderDesc("createTime");
-        List<RoleVO> roleVOPageResult = roleService.listAll(Role.class, RoleVO.class,  builder.toList());
-        return HttpResult.success(roleVOPageResult);
+        return super.list(builder.toList());
     }
 }

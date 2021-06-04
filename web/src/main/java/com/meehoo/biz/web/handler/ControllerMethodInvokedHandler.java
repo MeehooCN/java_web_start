@@ -85,9 +85,9 @@ public class ControllerMethodInvokedHandler {
     }
 
     private void beforeHandle(ProceedingJoinPoint joinPoint)throws Exception {
-//        if (!getAnnotation(joinPoint, UnAop.class)&&UserManager.getCurrent()==null){
-//            throw new NotLoginException();
-//        }
+        if (!getAnnotation(joinPoint, UnAop.class)&&UserManager.getCurrent()==null){
+            throw new NotLoginException();
+        }
         if (getAnnotation(joinPoint, OutputApi.class)){
             RequestAttributes ra = RequestContextHolder.getRequestAttributes();
             ServletRequestAttributes sra = (ServletRequestAttributes)ra;

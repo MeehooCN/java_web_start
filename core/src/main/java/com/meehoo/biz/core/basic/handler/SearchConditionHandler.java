@@ -32,7 +32,18 @@ public class SearchConditionHandler {
 
     public void handle(String name,Object value,String operand,DetachedCriteria criteria) throws SearchConditionException{
         try {
-            if (BaseUtil.objectNotNull(value)){
+            if (operand.equals(SearchCondition.ORDER_BY_ASC)){
+                criteria.addOrder(Order.asc(name));
+            }else if (operand.equals(SearchCondition.ORDER_BY_DESC)){
+                criteria.addOrder(Order.desc(name));
+            }
+            else if (SearchCondition.IS_NULL.equalsIgnoreCase(operand)){
+                criteria.add(Restrictions.isNull(name));
+            }
+            else if (SearchCondition.IS_NOT_NULL.equalsIgnoreCase(operand)){
+                criteria.add(Restrictions.isNotNull(name));
+            }
+            else if (BaseUtil.objectNotNull(value)){
                 switch (operand) {
                     case "like":
                         criteria.add(Restrictions.like(name, (String)value, MatchMode.ANYWHERE));
@@ -55,12 +66,6 @@ public class SearchConditionHandler {
                         break;
                     case "in":
                         criteria.add(Restrictions.in(name, ((String)value).split(",")));
-                        break;
-                    case SearchCondition.ORDER_BY_ASC:
-                        criteria.addOrder(Order.asc(name));
-                        break;
-                    case SearchCondition.ORDER_BY_DESC:
-                        criteria.addOrder(Order.desc(name));
                         break;
                     default:
                         break;

@@ -13,6 +13,8 @@ import lombok.experimental.Accessors;
 public class SearchCondition {
     public static final String ORDER_BY_DESC = "orderByDesc";
     public static final String ORDER_BY_ASC  = "orderByASC";
+    public static final String IS_NULL  = "isNull";
+    public static final String IS_NOT_NULL  = "isNotNull";
 
     private String name;
     private String operand;

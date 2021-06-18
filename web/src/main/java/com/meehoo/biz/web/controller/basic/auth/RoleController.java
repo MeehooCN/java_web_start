@@ -55,6 +55,7 @@ public class RoleController extends BaseController<Role,RoleVO> {
 //            role.setCode((roleRO.getNumber()));
 //        }
 //        role.setCode(roleService.getNextCode());
+        role.setEnable(1);
         role.setName(roleRO.getName());
         role.setRemark(roleRO.getRemark());
         role.setRoleType(roleRO.getRoleType());

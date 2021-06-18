@@ -60,7 +60,7 @@ public class MenuVO extends IdEntityVO {
      */
     private Integer menuType;
 
-    public MenuVO(Menu menu) throws Exception {
+    public MenuVO(Menu menu){
         super(menu);
         this.code = menu.getCode();
         this.name = menu.getName();

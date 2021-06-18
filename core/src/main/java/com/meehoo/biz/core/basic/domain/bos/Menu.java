@@ -1,17 +1,14 @@
 package com.meehoo.biz.core.basic.domain.bos;
 
 import com.meehoo.biz.core.basic.domain.IdEntity;
+import com.meehoo.biz.core.basic.domain.security.MenuDefine;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -93,6 +90,9 @@ public class Menu extends IdEntity {
      */
     @Column(columnDefinition = "INT default 0")
     private Integer menuType;
+
+    @OneToMany(mappedBy = "menu")
+    private List<MenuDefine> menuDefineList;
 
     @Override
     public boolean equals(Object o) {

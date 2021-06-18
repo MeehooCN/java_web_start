@@ -6,20 +6,21 @@ import com.meehoo.biz.common.util.StringUtil;
 import com.meehoo.biz.core.basic.dao.bos.IMenuDao;
 import com.meehoo.biz.core.basic.dao.security.IAuthRoleMenuDao;
 import com.meehoo.biz.core.basic.domain.bos.Menu;
-import com.meehoo.biz.core.basic.domain.security.Admin;
-import com.meehoo.biz.core.basic.domain.security.AuthRoleMenu;
-import com.meehoo.biz.core.basic.domain.security.Role;
-import com.meehoo.biz.core.basic.domain.security.User;
+import com.meehoo.biz.core.basic.domain.security.*;
 import com.meehoo.biz.core.basic.ro.security.AuthRoleMenuRO;
+import com.meehoo.biz.core.basic.ro.security.SetDefinesRO;
 import com.meehoo.biz.core.basic.service.BaseService;
 import com.meehoo.biz.core.basic.util.VOUtil;
 import com.meehoo.biz.core.basic.vo.bos.MenuVO;
 import com.meehoo.biz.core.basic.vo.security.AuthMenuTreeVO;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by CZ on 2017/10/25.
@@ -76,6 +77,28 @@ public class AuthMenuServiceImpl extends BaseService implements IAuthMenuService
         }
         authMenuTreeVO.setChecked(checkedIdList);
         return authMenuTreeVO;
+    }
+
+    @Override
+    public void setDefine(SetDefinesRO ro) {
+        // 删除旧有的
+        DetachedCriteria dc = DetachedCriteria.forClass(Role2MenuDefine.class);
+        dc.add(Restrictions.eq("role.id",ro.getRoleId()));
+        List list = list(dc);
+        batchDelete(list);
+        //
+        if (BaseUtil.listNotNull(ro.getMenuDefineIds())){
+            Role role = queryById(Role.class, ro.getRoleId());
+
+            List<MenuDefine> menuDefines = queryByIds(MenuDefine.class, ro.getMenuDefineIds());
+            List<Role2MenuDefine> collect = menuDefines.stream().map(e -> {
+                Role2MenuDefine role2MenuDefine = new Role2MenuDefine();
+                role2MenuDefine.setRole(role);
+                role2MenuDefine.setMenuDefine(e);
+                return role2MenuDefine;
+            }).collect(Collectors.toList());
+            batchSave(collect);
+        }
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.meehoo.biz.core.basic.service.security;
 
 
 import com.meehoo.biz.core.basic.ro.security.AuthRoleMenuRO;
+import com.meehoo.biz.core.basic.ro.security.SetDefinesRO;
 import com.meehoo.biz.core.basic.service.IBaseService;
 import com.meehoo.biz.core.basic.vo.security.AuthMenuTreeVO;
 
@@ -17,6 +18,9 @@ public interface IAuthMenuService extends IBaseService {
      * @throws Exception
      */
     AuthMenuTreeVO getMenuListByRoleId(String roleId) throws Exception;
+
+    // 设置自定义权限
+    void setDefine(SetDefinesRO ro);
     /**
      * 保存一条角色菜单授权信息
      * @param authRoleMenuRO

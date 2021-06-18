@@ -51,6 +51,8 @@ public class OptLogVO extends IdEntityVO {
      */
     private String opt;
 
+    private String type;
+
     public OptLogVO(OptLog optLog) {
         super(optLog);
         this.userId = optLog.getUserId();
@@ -59,6 +61,7 @@ public class OptLogVO extends IdEntityVO {
         this.roleName = optLog.getRoleName();
         this.createTime = DateUtil.timeToString(optLog.getCreateTime());
         this.opt = optLog.getOpt();
+        this.type = optLog.getType();
 //        switch (optLog.getOrgType()) {
 //            case Organization.ORG_TYPE_SQUADRON:
 //                this.orgType = "中队";

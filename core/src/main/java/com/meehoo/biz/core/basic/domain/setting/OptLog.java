@@ -72,4 +72,10 @@ public class OptLog extends IdEntity {
      */
     @Column
     private String opt;
+
+    /**
+     * 类型
+     */
+    @Column
+    private String type;
 }

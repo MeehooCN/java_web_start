@@ -3,17 +3,18 @@ package com.meehoo.biz.core.basic.vo.setting;
 import com.meehoo.biz.common.util.BaseUtil;
 import com.meehoo.biz.common.util.DateUtil;
 import com.meehoo.biz.core.basic.domain.setting.OptLog;
+import com.meehoo.biz.core.basic.vo.IdEntityVO;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.persistence.Id;
 
 /**
  * Created by wangjian on 2017-12-05.
  */
 @Setter
 @Getter
-public class OptLogVO {
-
-    private String id;
+public class OptLogVO extends IdEntityVO {
 
     /**
      * 操作人Id
@@ -51,7 +52,7 @@ public class OptLogVO {
     private String opt;
 
     public OptLogVO(OptLog optLog) {
-        this.id = optLog.getId();
+        super(optLog);
         this.userId = optLog.getUserId();
         this.userName = optLog.getUserName();
         this.orgName = optLog.getOrgName();

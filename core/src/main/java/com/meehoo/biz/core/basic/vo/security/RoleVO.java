@@ -1,6 +1,7 @@
 package com.meehoo.biz.core.basic.vo.security;
 import com.meehoo.biz.common.util.BaseUtil;
 import com.meehoo.biz.common.util.DateUtil;
+import com.meehoo.biz.common.util.StringUtil;
 import com.meehoo.biz.core.basic.domain.security.Role;
 import com.meehoo.biz.core.basic.vo.IdEntityVO;
 import lombok.Getter;
@@ -33,10 +34,13 @@ public class RoleVO extends IdEntityVO{
 
     private int    userHas; //用户是否拥有该角色(0没有,1有)
 
-    public RoleVO(Role role) throws Exception {
+    public RoleVO(Role role){
         this.id = role.getId();
         String code = role.getCode();
-        if (code.length()==1){
+        if (StringUtil.stringIsNull(code)){
+
+        }
+        else if (code.length()==1){
             number = "00"+code;
         }else if (code.length()==2){
             number = "0"+code;

@@ -32,6 +32,8 @@ public class RoleVO extends IdEntityVO{
 
     private String updateTime;
 
+    private int roleType;
+
     private int    userHas; //用户是否拥有该角色(0没有,1有)
 
     public RoleVO(Role role){
@@ -52,5 +54,6 @@ public class RoleVO extends IdEntityVO{
         this.status = role.getStatus();
         this.createTime = DateUtil.dateToString(role.getCreateTime());
         this.updateTime = DateUtil.dateToString(role.getUpdateTime());
+        this.roleType = role.getRoleType();
     }
 }

@@ -59,6 +59,8 @@ public class MenuVO extends IdEntityVO {
      * 1 用户菜单
      */
     private Integer menuType;
+    private String key;
+    private String title;
 
     public MenuVO(Menu menu){
         super(menu);
@@ -68,6 +70,8 @@ public class MenuVO extends IdEntityVO {
         this.url = menu.getUrl();
         this.status = menu.getStatus();
         this.menuType = menu.getMenuType();
+        this.key = menu.getId();
+        this.title = menu.getName();
         List<Menu> childMenuList = menu.getChildMenuList();
         if (BaseUtil.collectionNotNull(childMenuList)) {
             childMenuList.sort(Comparator.comparingInt(Menu::getSeq));
